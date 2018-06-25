@@ -13,9 +13,9 @@ install:
   - export DISPLAY=':99.0'
   - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
   - meteor npm install
-test:
+script:
   - npm console-test
 services:
   - mongodb
 env:
-  - LAIKA_OPTIONS="-t 5000" TEST_BROWSER_DRIVER=nightmare
+  - LAIKA_OPTIONS="-t 5000"
