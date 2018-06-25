@@ -2,8 +2,16 @@ sudo: required
 language: node_js
 node_js:
   - "7"
+addons:
+  apt:
+    packages:
+      - xvfb
+    
 before_install:
   - "curl -L https://raw.githubusercontent.com/arunoda/travis-ci-laika/6a3a7afc21be99f1afedbd2856d060a02755de6d/configure.sh | /bin/sh"
+install:
+  - export DISPLAY=':99.0'
+  - Xvfb : 99 -screen 0 1024x768x24 > /dev/null 2>&1 &
 services:
   - mongodb
 env:
