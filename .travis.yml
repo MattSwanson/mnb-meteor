@@ -8,4 +8,4 @@ services:
   - mongodb
 env:
   - LAIKA_OPTIONS="-t 5000"
-  - TEST_BROWSER_DRIVER="nightmare"
+  - TEST_BROWSER_DRIVER=nightmare
