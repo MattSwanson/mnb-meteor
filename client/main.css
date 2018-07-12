@@ -1,1 +1,18 @@
+td div.slice{
+  width: 100%;
+  text-overflow: ellipsis; 
+  overflow: hidden; 
+  white-space: nowrap;
+}
 
+@media (max-width: 991.98px){
+  td div.slice{
+    width: 50px;
+  }
+}
+
+@media (max-width: 575.98px){
+  td div.slice{
+    width: 25px;
+  }
+}
