@@ -65,11 +65,18 @@
       </li>
     </ul>
     <form class="form-inline my-2 my-lg-0">
-      <input type="text" class="form-control mr-sm-2" placeholder="Search">
+      <input type="text" class="form-control mr-sm-2 search-input" placeholder="Search">
       <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
     </form>
   </div>
 </div>
 </nav>
 
+<div class="search-results {{#if hasResults}}has-results{{/if}}">
+  <ul class="list-group list-group-flush">
+    {{#each searchResults }}
+      <li class="list-group-item">{{ name }} - {{ type }}</li>
+    {{/each}}
+  </ul>
+</div>
 </template>

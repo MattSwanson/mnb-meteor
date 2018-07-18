@@ -20,3 +20,19 @@ td div.slice{
     width: 25px;
   }
 }
+
+/* Search Results */
+
+.search-results{
+  height: 0px;
+  z-index: 1;
+  position: fixed;
+  background: aqua;
+}
+
+.has-results{
+  height: auto;
+  visibility: visible;
+  top: 84px;
+  width: 100%;
+}
