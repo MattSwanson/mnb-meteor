@@ -23,6 +23,10 @@ Template.nav.events({
     }else if(results.length >= 0){
       SearchResults.remove({});
     }
+  },
+  'click .search-results a': function(event, template){
+    SearchResults.remove({});
+    template.find('.search-input').value = '';
   }
 });
 
