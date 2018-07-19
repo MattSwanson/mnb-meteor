@@ -9,7 +9,7 @@ if(Meteor.isServer){
     return SalesOrders.find({});
   });
 
-  Meteor.publish('openLineItems', function (){
+  Meteor.publish('openSalesOrders', function (){
     console.log("Publishing Open Line Items");
     return SalesOrders.find({
       lineItems: {

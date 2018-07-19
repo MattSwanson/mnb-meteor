@@ -27,7 +27,7 @@ Template.registerHelper('rowClass', (status) => {
 
 Template.schedule.onCreated(function(){
   console.log('Schedule template created');
-  Meteor.subscribe('openLineItems');
+  Meteor.subscribe('openSalesOrders');
 });
 
 Template.schedule.helpers({
