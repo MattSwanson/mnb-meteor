@@ -19,3 +19,5 @@ shell-server@0.3.1            # Server-side component of the `meteor shell` comm
 
 meteortesting:mocha
 meteortoys:allthings
+kadira:flow-router
+kadira:blaze-layout
