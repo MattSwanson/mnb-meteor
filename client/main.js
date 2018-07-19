@@ -10,6 +10,7 @@ import '../imports/ui/schedule/schedule.js';
 import '../imports/ui/salesOrders/viewer.js';
 import '../imports/ui/salesOrders/index.js';
 import '../imports/ui/purchaseOrders/index.js';
+import '../imports/ui/purchaseOrders/viewer.js';
 
 Template.hello.onCreated(function helloOnCreated() {
   // counter starts at 0

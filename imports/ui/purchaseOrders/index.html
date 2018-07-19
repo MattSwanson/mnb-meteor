@@ -12,7 +12,7 @@
         <tbody>
           {{#each orders}}
             <tr>
-              <td>{{ number }}</td>
+              <td><a href="/purchaseOrders/{{ _id._str }}">{{ number }}</a></td>
               <td>{{ subDate orderDate }}</td>
               <td>{{ vendor.name }}</td>
             </tr>

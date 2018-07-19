@@ -75,7 +75,7 @@
 <div class="search-results {{#if hasResults}}has-results{{/if}}">
   <div class="list-group list-group-flush">
     {{#each searchResults }}
-      <a href="/salesOrders/{{ recordId._str }}" class="list-group-item"><div>{{ name }} - {{ type }}</div></a>
+      <a href="{{ createResultUrl type }}{{recordId._str}}" class="list-group-item"><div>{{ name }} - {{ type }}</div></a>
     {{/each}}
   </div>
 </div>

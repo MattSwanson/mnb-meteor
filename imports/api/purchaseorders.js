@@ -18,4 +18,9 @@ if(Meteor.isServer){
       }
     });
   });
+
+  Meteor.publish('singlePurchaseOrder', function(id){
+    const oid = new Mongo.ObjectID(id);
+    return PurchaseOrders.find(oid);
+  });
 }

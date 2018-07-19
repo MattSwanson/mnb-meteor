@@ -36,5 +36,15 @@ Template.nav.helpers({
   },
   hasResults(){
     return (SearchResults.find({}).count() > 0);
+  },
+  createResultUrl(type){
+    url = '/';
+    switch(type){
+      case 'Sales Order':
+        url += 'salesOrders/'; break;
+      case 'Purchase Order':
+        url += 'purchaseOrders/'; break;
+    }
+    return url;
   }
 });
