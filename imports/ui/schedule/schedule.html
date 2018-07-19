@@ -1,5 +1,5 @@
 <template name="schedule">
-<div>
+<div class="container">
   <h1>Schedule</h1>
   <table class="table table-striped table-hover">
     <thead>
@@ -17,7 +17,7 @@
     <tbody>
       {{#each schedule }}
       <tr class="{{ rowClass status }}">
-        <td>{{ poNumber }}</td>
+        <td><a href="/salesOrders/{{ orderId }}">{{ poNumber }}</a></td>
         <td>{{ qty }}</td>
         <td>{{ item.number }}</td>
         <td>{{ item.revision }}</td>

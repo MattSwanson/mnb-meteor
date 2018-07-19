@@ -22,4 +22,9 @@ if(Meteor.isServer){
       lineItems: 1
     });
   });
+
+  Meteor.publish('singleSalesOrder', function(id){
+    const oid = new Mongo.ObjectID(id);
+    return SalesOrders.find(oid);
+  });
 }

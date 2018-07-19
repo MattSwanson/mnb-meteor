@@ -9,21 +9,11 @@
 
 <body>
   {{> nav}}
-  <div class="container">
-  <div class="jumbotron">
-    <h1>Welcome to Minnesota Bolt</h1>
-
-    {{> hello}}
-  </div>
-  <div>
-    {{> schedule}}
-  </div>
-  </div>
 </body>
 
-
-<template name="hello">
-  <button type="button" class="btn btn-primary">Click Me</button>
-  <p>You've pressed the button {{counter}} times.</p>
+<template name="MainContent">
+  {{> Template.dynamic template=main }}
 </template>
+
+
 

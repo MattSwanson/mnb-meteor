@@ -8,6 +8,23 @@ Template.registerHelper('subDate', (isoDate) => {
   return isoDate.toISOString().substring(0,10);
 });
 
+Template.registerHelper('rowClass', (status) => {
+  switch(status){
+    case 'Waiting':
+      return "table-warning";
+    case 'Ready':
+      return "table-success";
+    case 'In Production':
+      return "table-danger";
+    case 'Shipped':
+      return "table-primary";
+    case 'Closed':
+      return "table-dark";
+    default:
+      return "";
+  }
+})
+
 Template.schedule.onCreated(function(){
   console.log('Schedule template created');
   Meteor.subscribe('openLineItems');
@@ -24,6 +41,7 @@ Template.schedule.helpers({
       // Put the salesorder custOrderNumber into each orderline before its added to the array
       val.lineItems.forEach((line)=>{
         line.poNumber = val.custOrderNumber;
+        line.orderId = val._id._str;
       });
       // Concat the orderlines to the accumulated array
       return [...acc, ...val.lineItems];
@@ -44,16 +62,4 @@ Template.schedule.helpers({
 
     return final;
   },
-  rowClass(status){
-    switch(status){
-      case 'Waiting':
-        return "table-warning";
-      case 'Ready':
-        return "table-success";
-      case 'In Production':
-        return "table-danger";
-      default:
-        return "";
-    }
-  }
 });
