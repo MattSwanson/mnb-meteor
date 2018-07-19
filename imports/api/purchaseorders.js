@@ -8,4 +8,14 @@ if(Meteor.isServer){
     console.log("Publishing Purchase Orders");
     return PurchaseOrders.find({});
   });
+
+  Meteor.publish('openPurchaseOrders', function(){
+    return PurchaseOrders.find({
+      lineItems: {
+        $elemMatch: {
+          complete: false
+        }
+      }
+    });
+  });
 }

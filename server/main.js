@@ -3,6 +3,7 @@ import { generateSearchIndex } from './search.js';
 
 import '../imports/api/salesorders.js';
 import '../imports/api/search.js';
+import '../imports/api/purchaseorders.js';
 
 
 Meteor.startup(() => {

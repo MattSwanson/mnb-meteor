@@ -1,8 +1,10 @@
 import { SalesOrders } from '../imports/api/salesorders.js';
+import { PurchaseOrders } from '../imports/api/purchaseorders.js';
+import { SearchIndex } from '../imports/api/search.js';
 
 export function generateSearchIndex(){
   console.log("Generating the search index...");
-  SearchIndex._dropCollection();
+  SearchIndex.remove({});
   
   //Search Index will be a mongocollection with all fields
   //available to search for
@@ -23,6 +25,7 @@ export function generateSearchIndex(){
 
   // Get items from:
   // Salesorders
+  console.log("Inserting Sales Orders...");
   let salesOrders = SalesOrders.find({}).fetch().map((doc)=>{
     return {
       name: doc.custOrderNumber,
@@ -33,7 +36,20 @@ export function generateSearchIndex(){
   salesOrders.forEach((doc)=>{
     SearchIndex.insert(doc);
   });
+  console.log("Sales orders inserted");
   // Purchase Orders
+  console.log("Inserting Purchase Orders...");
+  let purchaseOrders = PurchaseOrders.find({}).fetch().map((doc) =>{
+    return {
+      name: doc.number,
+      type: 'Purchase Order',
+      recordId: doc._id
+    }
+  });
+  purchaseOrders.forEach((doc)=>{
+    SearchIndex.insert(doc);
+  });
+  console.log("Purchase orders inserted");
   // Items
   
 }
