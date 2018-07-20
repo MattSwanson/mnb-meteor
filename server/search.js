@@ -33,9 +33,10 @@ export function generateSearchIndex(){
       recordId: doc._id
     };
   });
-  salesOrders.forEach((doc)=>{
-    SearchIndex.insert(doc);
-  });
+  SearchIndex.batchInsert(salesOrders);
+  // salesOrders.forEach((doc)=>{
+  //   SearchIndex.insert(doc);
+  // });
   console.log("Sales orders inserted");
   // Purchase Orders
   console.log("Inserting Purchase Orders...");
@@ -46,9 +47,10 @@ export function generateSearchIndex(){
       recordId: doc._id
     }
   });
-  purchaseOrders.forEach((doc)=>{
-    SearchIndex.insert(doc);
-  });
+  SearchIndex.batchInsert(purchaseOrders);
+  // purchaseOrders.forEach((doc)=>{
+  //   SearchIndex.insert(doc);
+  // });
   console.log("Purchase orders inserted");
   // Items
   
