@@ -1,0 +1,56 @@
+<template name="kitViewer">
+<div class="container-fluid">
+  <h2>{{ kit.simpleDescription }}</h2>
+  <h2>{{ kit.number }}</h2>
+  <h2>{{ kit.kit.packaging }} | {{ kit.kit.cartonQty }} kit in a {{ kit.kit.carton }} box</h2>
+  <h2>Rev level: {{ kit.revision }}</h2>
+  <p>{{ kit.revisionNote }}</p>
+  {{#if kit.specialInstructions}}
+    <div class="alert alert-primary">
+      {{# each inst in kit.specialInstructions }}
+        {{ inst }}<br/>
+      {{/each}}
+    </div>
+  {{/if}}
+  <p>
+    Compare to old revision: N/A
+    <!-- Iterate through each old revision here when available 
+          and create links to the comparison page for each
+    -->
+  </p>
+  <a href="#">Edit Current Rev</a> | <a href="#">Revise Kit</a> | <a href="#">Quote Kit</a>
+
+  <!-- Content tables - one for each bag in kit -->
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Qty</th>
+        <th scope="col">UOM</th>
+        <th scope="col">Item Number</th>
+        <th scope="col">Rev</th>
+        <th scope="col">Desc</th>
+        <th scope="col">Finish</th>
+        <th scope="col">Cost</th>
+        <th scope="col">Sale Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each item in kit.kit.contents}}
+        <tr>
+          <td>{{ item.qty }}</td>
+          <td>{{ item.uom }}</td>
+          <td><a href="/items/{{ item.item.refId._str }}">{{ item.item.number }}</a></td>
+          <td>{{ item.item.revision }}</td>
+          <td>{{ item.item.simpleDescription }}</td>
+          <td>Not yet</td>
+          <td>Not yet</td>
+          <td>Not yet</td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+  <!-- File manager gets rendered here when available -->
+  <!-- Table of item history - This is another thing that could be shared with parts -->
+
+</div> 
+</template>

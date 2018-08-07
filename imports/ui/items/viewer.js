@@ -4,6 +4,7 @@ import { Template } from 'meteor/templating';
 
 import './viewer.html';
 import './partViewer.html';
+import './kitViewer.html';
 import { Items } from '../../api/items';
 
 FlowRouter.route('/items/:id', {

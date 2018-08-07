@@ -2,6 +2,7 @@
     {{#if item }}
       {{#if item.kit.carton}} 
         <!-- this item is a kit so render the kit viewer -->
+        {{> kitViewer kit=item}}
       {{else}}
         <!-- this item is a part so render the part viewer -->
         {{> partViewer part=item }}
