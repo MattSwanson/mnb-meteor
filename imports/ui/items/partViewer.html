@@ -1,0 +1,45 @@
+<template name="partViewer">
+  <div class="container-fluid">
+    {{#if part.isActive}}
+    {{else}}
+    <div class="row">
+      <div class="alert alert-dismissible alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <h4 class="alert-heading">Warning!</h4>
+        <p class="mb-0"><strong>This item is inactive</strong> - if you got here from an active kit or order please notify someone!</p>
+      </div>
+    </div>
+    {{/if}}
+    <div class="row">
+      <div class="side-panel col-sm-3">
+        <!-- Basic part information will go here -->
+        <div class="card mb-3">
+          <h3 class="card-header">{{ part.number }} - {{ part.revision }}</h3>
+          <div class="card-body">
+            <h5 class="card-title">{{ part.part.description }}</h5>
+            <h6 class="card-subtitle">{{ part.part.size }}</h6>
+            <p class="card-text">
+              {{#each finish in part.part.finishes }}
+                {{ finish }}<br/>
+              {{/each}}
+              {{ part.part.origin }}<br/>
+              Location: {{ part.location.shelfId }}-{{ part.location.shelfNum }}<br/>
+            </p>
+            <table>
+                <tbody>
+                  <tr><td>Cost</td><td>{{ part.cost }}</td></tr>
+                  <tr><td>Sale Price</td><td>{{ part.salePrice }}</td></tr>
+                </tbody>
+              </table>
+            <p class="card-text"><small>Effective: {{ subDate part.effectiveDate }}</small></p>
+          </div>
+        </div>
+        
+      </div>
+      <div class="rest col-sm-9">
+        <!-- Other info like history and reqs will render into here -->
+        <h1><strong>HELLO</strong> this is the part content panel</h1>
+      </div>
+    </div>
+  </div>
+</template>

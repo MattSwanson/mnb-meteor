@@ -1,0 +1,36 @@
+<template name="itemViewer">
+    {{#if item }}
+      {{#if item.kit.carton}} 
+        <!-- this item is a kit so render the kit viewer -->
+      {{else}}
+        <!-- this item is a part so render the part viewer -->
+        {{> partViewer part=item }}
+      {{/if}}
+
+      <!--<div class="row">
+        <div class="left-panel col-sm-3">
+          <h1>{{ item.number }} - {{ item.revision }}</h1>
+          <h2>{{ item.simpleDescription }}</h2>
+          <h3>Effective: {{ subDate item.effectiveDate }}</h3>
+        </div>
+        <div class="rest col-sm-9">
+          
+          <div class="alert alert-dismissible alert-success">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Hey!</strong> This item is a kit!
+          </div>
+          
+          <div class="alert alert-dismissible alert-primary">
+              <button type="button" class="close" data-dismiss="alert">&times;</button>
+              <strong>Hey!</strong> This item is a part!
+            </div>
+          
+        </div>
+      </div> -->
+
+    {{else}}
+      <div class="container-fluid">
+          <h1>Loading Item Information...</h1>
+      </div>
+    {{/if}}
+</template>

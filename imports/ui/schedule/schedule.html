@@ -19,7 +19,7 @@
       <tr class="{{ rowClass status }}">
         <td><a href="/salesOrders/{{ orderId }}">{{ poNumber }}</a></td>
         <td>{{ qty }}</td>
-        <td>{{ item.number }}</td>
+        <td><a href="/items/{{ item.refId._str }}">{{ item.number }}</a></td>
         <td>{{ item.revision }}</td>
         <td><div class="slice">{{ item.simpleDescription }}</div></td>
         <td>{{ subDate reqDate }}</td>
