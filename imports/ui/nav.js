@@ -44,6 +44,8 @@ Template.nav.helpers({
         url += 'salesOrders/'; break;
       case 'Purchase Order':
         url += 'purchaseOrders/'; break;
+      case 'Item':
+        url += 'items/'; break;
     }
     return url;
   }

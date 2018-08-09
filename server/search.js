@@ -1,5 +1,6 @@
 import { SalesOrders } from '../imports/api/salesorders.js';
 import { PurchaseOrders } from '../imports/api/purchaseorders.js';
+import { Items } from '../imports/api/items.js';
 import { SearchIndex } from '../imports/api/search.js';
 
 export function generateSearchIndex(){
@@ -52,7 +53,17 @@ export function generateSearchIndex(){
   //   SearchIndex.insert(doc);
   // });
   console.log("Purchase orders inserted");
-  // Items
+  // Items - only index active items...
+  console.log("Inserting Items...");
+  let items = Items.find({ isActive: true }).fetch().map((doc) =>{
+    return {
+      name: `${doc.number} - ${doc.revision} - ${doc.simpleDescription}`,
+      type: 'Item',
+      recordId: doc._id
+    }
+  });
+  SearchIndex.batchInsert(items);
+  console.log("Items inserted");
   
 }
 
