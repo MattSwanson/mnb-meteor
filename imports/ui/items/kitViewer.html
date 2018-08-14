@@ -22,34 +22,37 @@
 
   <!-- Content tables - one for each bag in kit -->
   <h3>Contents</h3>
-  <table class="table table-hover">
-    <thead>
-      <tr>
-        <th scope="col">Qty</th>
-        <th scope="col">UOM</th>
-        <th scope="col">Item Number</th>
-        <th scope="col">Rev</th>
-        <th scope="col">Desc</th>
-        <th scope="col">Finish</th>
-        <th scope="col">Cost</th>
-        <th scope="col">Sale Price</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#each item in kit.kit.contents}}
+  {{#each bag in kit.kit.contents}}
+  <h5>Bag {{ bag.bagName }}</h5>
+    <table class="table table-hover">
+      <thead>
         <tr>
-          <td>{{ item.qty }}</td>
-          <td>{{ item.uom }}</td>
-          <td><a href="/items/{{ item.item.refId._str }}">{{ item.item.number }}</a></td>
-          <td>{{ item.item.revision }}</td>
-          <td>{{ item.item.simpleDescription }}</td>
-          <td>Not yet</td>
-          <td>Not yet</td>
-          <td>Not yet</td>
+          <th scope="col">Qty</th>
+          <th scope="col">UOM</th>
+          <th scope="col">Item Number</th>
+          <th scope="col">Rev</th>
+          <th scope="col">Desc</th>
+          <th scope="col">Finish</th>
+          <th scope="col">Cost</th>
+          <th scope="col">Sale Price</th>
         </tr>
-      {{/each}}
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        {{#each item in bag.items}}
+          <tr>
+            <td>{{ item.qty }}</td>
+            <td>{{ item.uom }}</td>
+            <td><a href="/items/{{ item.item.refId._str }}">{{ item.item.number }}</a></td>
+            <td>{{ item.item.revision }}</td>
+            <td>{{ item.item.simpleDescription }}</td>
+            <td>Not yet</td>
+            <td>Not yet</td>
+            <td>Not yet</td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  {{/each}}
   <!-- File manager gets rendered here when available -->
   <!-- Table of item history - This is another thing that could be shared with parts -->
   <h3>Shipment History</h3>
