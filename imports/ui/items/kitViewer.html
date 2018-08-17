@@ -60,18 +60,20 @@
     <thead>
       <tr>
         <th scope="col">Customer</th>
+        <th scope="col">PO</th>
         <th scope="col">Qty</th>
         <th scope="col">UOM</th>
         <th scope="col">Ship Date</th>
       </tr>
     </thead>
     <tbody>
-      {{#each shipment in kit.shipments}}
+      {{#each shipment in kit.history}}
         <tr>
-          <td>{{ shipment.customer }}</td>
+          <td>{{ shipment.linkedOrder.company }}</td>
+          <td>{{ shipment.linkedOrder.refNumber }}</td>
           <td>{{ shipment.quantity }}</td>
           <td>{{ shipment.uom }}</td>
-          <td>{{ subDate shipment.shipDate }}</td>
+          <td>{{ subDate shipment.date }}</td>
         </tr>
       {{/each}}
     </tbody>
