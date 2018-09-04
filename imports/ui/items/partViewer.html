@@ -38,7 +38,35 @@
       </div>
       <div class="rest col-sm-9">
         <!-- Other info like history and reqs will render into here -->
-        <h1><strong>HELLO</strong> this is the part content panel</h1>
+        <h1>Item History</h1>
+        <table class="table table-hover">
+          <thead><tr>
+            
+          </tr></thead>
+          <tbody>
+            <!-- {{# each shipment in part.history }}
+              <tr>
+                <td>{{ subDate shipment.date }}</td>
+                <td>{{ shipment.quantity }}</td>
+                <td>{{ shipment.uom }}</td>
+                <td>{{ shipment.transactionType }}</td>
+                <td>{{ shipment.linkedOrder.company }}</td>
+                <td>{{ shipment.linkedOrder.refNumber }}</td>
+                <td>{{ shipment.processedInto.number }} - {{ shipment.processedInto.revision }}</td>
+              </tr>
+            {{/each}} -->
+            {{#each line in history}}
+              <tr>
+                <td>{{ line.quantity}}{{ line.uom }}</td>
+                <td>{{ line.itemNumber }} - {{ line.itemRevision }}</td>
+                <td>{{ line.transactionType }}</td>
+                <td>{{ line.linkedOrder.company }}</td>
+                <td>{{ line.linkedOrder.refNumber }}</td>
+                <td>{{ subDate line.date }}</td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
       </div>
     </div>
   </div>

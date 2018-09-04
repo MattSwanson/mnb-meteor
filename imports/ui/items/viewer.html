@@ -1,12 +1,14 @@
 <template name="itemViewer">
     {{#if item }}
+      {{#let history=aHistory}}
       {{#if item.kit.carton}} 
         <!-- this item is a kit so render the kit viewer -->
         {{> kitViewer kit=item}}
       {{else}}
         <!-- this item is a part so render the part viewer -->
-        {{> partViewer part=item }}
+        {{> partViewer part=item history=history}}
       {{/if}}
+      {{/let}}
 
       <!--<div class="row">
         <div class="left-panel col-sm-3">
