@@ -1,5 +1,5 @@
 <template name="partViewer">
-  <div class="container-fluid">
+  <div class="container-fluid" style="height: 100%">
     {{#if part.isActive}}
     {{else}}
     <div class="row">
@@ -10,7 +10,7 @@
       </div>
     </div>
     {{/if}}
-    <div class="row">
+    <div class="row" style="height: 100%">
       <div class="side-panel col-sm-3">
         <!-- Basic part information will go here -->
         <div class="card mb-3">
@@ -36,37 +36,47 @@
         </div>
         
       </div>
-      <div class="rest col-sm-9">
+      <div class="rest col-sm-9" style="height: 100%; overflow-y: scroll">
         <!-- Other info like history and reqs will render into here -->
-        <h1>Item History</h1>
-        <table class="table table-hover">
-          <thead><tr>
-            
-          </tr></thead>
-          <tbody>
-            <!-- {{# each shipment in part.history }}
-              <tr>
-                <td>{{ subDate shipment.date }}</td>
-                <td>{{ shipment.quantity }}</td>
-                <td>{{ shipment.uom }}</td>
-                <td>{{ shipment.transactionType }}</td>
-                <td>{{ shipment.linkedOrder.company }}</td>
-                <td>{{ shipment.linkedOrder.refNumber }}</td>
-                <td>{{ shipment.processedInto.number }} - {{ shipment.processedInto.revision }}</td>
-              </tr>
-            {{/each}} -->
-            {{#each line in history}}
-              <tr>
-                <td>{{ line.quantity}}{{ line.uom }}</td>
-                <td>{{ line.itemNumber }} - {{ line.itemRevision }}</td>
-                <td>{{ line.transactionType }}</td>
-                <td>{{ line.linkedOrder.company }}</td>
-                <td>{{ line.linkedOrder.refNumber }}</td>
-                <td>{{ subDate line.date }}</td>
-              </tr>
-            {{/each}}
-          </tbody>
-        </table>
+        {{#if history}}
+          <h1>Item History</h1>
+          <table class="table table-hover">
+            <thead><tr>
+              
+            </tr></thead>
+            <tbody>
+              <!-- {{# each shipment in part.history }}
+                <tr>
+                  <td>{{ subDate shipment.date }}</td>
+                  <td>{{ shipment.quantity }}</td>
+                  <td>{{ shipment.uom }}</td>
+                  <td>{{ shipment.transactionType }}</td>
+                  <td>{{ shipment.linkedOrder.company }}</td>
+                  <td>{{ shipment.linkedOrder.refNumber }}</td>
+                  <td>{{ shipment.processedInto.number }} - {{ shipment.processedInto.revision }}</td>
+                </tr>
+              {{/each}} -->
+              {{#each line in history}}
+                <tr>
+                  <td>{{ line.quantity}}{{ line.uom }}</td>
+                  <td>{{ line.itemNumber }} - {{ line.itemRevision }}</td>
+                  <td>{{ line.transactionType }}</td>
+                  <td>
+                    {{#if line.usedInKit.number }}
+                      {{ line.usedInKit.number }}
+                    {{else}}
+                      {{ line.linkedOrder.company }}
+                    {{/if}}
+                  </td>
+                  <td>{{ line.linkedOrder.refNumber }}</td>
+                  <td>{{ subDate line.date }}</td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        {{else}}
+          <h1>Loading Item History...</h1>
+        {{/if}}
       </div>
     </div>
   </div>

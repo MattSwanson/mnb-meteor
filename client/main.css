@@ -1,5 +1,10 @@
+html{
+  height: 100%;
+}
+
 body{
-  padding-top: 125px;
+  padding-top: 100px;
+  height: 100%;
 }
 
 td div.slice{
