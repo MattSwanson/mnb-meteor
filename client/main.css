@@ -41,3 +41,35 @@ td div.slice{
   top: 84px;
   width: 100%;
 }
+
+/* Part viewer */
+
+
+.part-viewer {
+  height: 100%;
+}
+
+.part-viewer div.row {
+  height: 100%;
+}
+
+.part-viewer div.rest {
+  height: 100%;
+  overflow-y: hidden;
+  padding-bottom: 51.5px;
+}
+
+.part-viewer #partTabContent {
+  height: 100%;
+  overflow-y: scroll;
+}
+
+@media(max-width: 575px){
+  .part-viewer div.rest {
+    overflow-y: visible;
+  }
+  
+  .part-viewer #partTabContent {
+    overflow-y: visible;
+  }
+}
