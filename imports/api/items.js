@@ -19,4 +19,9 @@ if(Meteor.isServer){
     }, []);
     return Items.find({ _id: { $in: aliasIds }});
   });
+
+  Meteor.publish('itemNeeds', function(){
+    console.log('Publishing Item Needs');
+    return Items.find({ needs: { $exists: true, $ne: [] }});
+  });
 }
