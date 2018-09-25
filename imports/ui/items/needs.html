@@ -1,0 +1,30 @@
+<template name="itemNeeds">
+  <div class="container-fluid">
+    <h1>Parts needed to Order</h1>
+    {{#if needs}}
+      <table class="table table-hover">
+        <thead></thead>
+        <tbody>
+            {{#each needs}}
+            <tr>
+              <td>{{ number }}</td>
+              <td>{{ revision }}</td>
+              <td>{{ quantity }}</td>
+              <td>{{ subDate needDate }}</td>
+              <td>{{ lastModified }}</td>
+              <td>{{ addedBy }}</td>
+            </tr>
+            {{#each notes}}
+              <tr class="table-primary">
+                <td colspan="5">{{ note }}</td>
+                <td>{{ createdBy }}</td>
+              </tr>
+            {{/each}}
+          {{/each}}
+        </tbody>
+      </table>
+    {{else}}
+      <h1>Loading Needs List</h1>
+    {{/if}}
+  </div>
+</template>
