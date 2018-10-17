@@ -16,7 +16,8 @@
             <th>Rev</th>
             <th>Desc</th>
             <th>Due Date</th>
-            <th>Status</th>
+            <th>Recd Qty</th>
+            <th>Rec Date</th>
           </tr>
         </thead>
         <tbody>
@@ -27,7 +28,9 @@
               <td>{{ item.revision }}</td>
               <td>{{ item.simpleDescription }}</td>
               <td>{{ subDate reqDate }}</td>
-              <td>{{ status }}</td>
+              <td>{{ recdQty }}</td>
+              <td>{{ recdDate }}</td>
+              <td><button class="btn btn-primary btn-sm rec-btn">Receive</button></td>
             </tr>
           {{/each}}
         </tbody>
