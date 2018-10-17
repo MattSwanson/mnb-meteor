@@ -119,6 +119,10 @@ Template.itemViewer.helpers({
       });
       return acc;
     }, []);
+    // Sort the lines by required date ascending
+    lines.sort((a,b)=>{
+      return a.reqDate - b.reqDate;
+    });
     return lines;
   }
 })
