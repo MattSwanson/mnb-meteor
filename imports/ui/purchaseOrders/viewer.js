@@ -12,6 +12,12 @@ FlowRouter.route('/purchaseOrders/:id', {
   }
 });
 
+Template.poViewer.events({
+  'click .rec-btn': function(event, template){
+    console.log('a rec btn has been clicked');
+  }
+});
+
 Template.poViewer.onCreated(function(){
   this.autorun(function(){
     FlowRouter.watchPathChange();
