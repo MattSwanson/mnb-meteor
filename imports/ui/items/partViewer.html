@@ -43,6 +43,9 @@
             <a href="#history" class="nav-link active show" data-toggle="tab">History</a>
           </li>
           <li class="nav-item">
+            <a href="#usedIn" class="nav-link" data-toggle="tab">Kits Used In</a>
+          </li>
+          <li class="nav-item">
             <a href="#reqs" class="nav-link" data-toggle="tab">Requirements</a>
           </li>
           <li class="nav-item">
@@ -101,12 +104,43 @@
               <h1>Loading Item History...</h1>
             {{/if}}
           </div>
-
+          <div class="tab-pane fade" id="usedIn">
+            <table class="table table-hover">
+              {{# each part.usedIn }}
+                <tr>
+                  <td>{{ number }}</td>
+                  <td>{{ revision }}</td>
+                  <td>{{ quantityUsed }}</td>
+                </tr>
+              {{/each}}
+            </table>
+          </div>
           <div class="tab-pane fade" id="reqs">
-            <h1>Requirements will go here</h1>
+            <table class="table table-hover">
+              {{#each part.currentRequirements }}
+                <tr>
+                  <td>{{ location }}</td>
+                  <td>{{ job }}</td>
+                  <td>{{ subDate needDate }}</td>
+                  <td>{{ issuedQty }}</td>
+                  <td>{{ qty }}</td>
+                </tr>
+              {{/each}}
+            </table>
           </div>
           <div class="tab-pane fade" id="forKits">
-            <h1>Needed for Kits will go here</h1>
+            <table class="table table-hover">
+              {{#each line in forKits}}
+              <tr>
+                <td>{{ line.item.number }}</td>
+                <td>{{ line.item.revision }}</td>
+                <td>{{ line.item.simpleDescription }}</td>
+                <td>{{ subDate line.reqDate }}</td>
+                <td>{{ line.custOrderNumber }}</td>
+                <td>{{ line.totalQtyNeeded }}</td>
+              </tr>
+              {{/each}}
+            </table>
           </div>
           <div class="tab-pane fade" id="inProcess">
             <h1>In Process will go here</h1>

@@ -6,7 +6,9 @@
         {{> kitViewer kit=item}}
       {{else}}
         <!-- this item is a part so render the part viewer -->
-        {{> partViewer part=item history=history}}
+        {{#let forKits=neededForKits}}
+        {{> partViewer part=item history=history forKits=forKits}}
+        {{/let}}
       {{/if}}
       {{/let}}
 
