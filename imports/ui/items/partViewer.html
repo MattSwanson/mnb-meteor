@@ -68,20 +68,14 @@
             {{#if history}}
               <table class="table table-hover">
                 <thead><tr>
-                  
+                  <th scope="col">Qty Used</th>
+                  <th scope="col">Item</th>
+                  <th scope="col">Use</th>
+                  <th scope="col">Destination</th>
+                  <th scope="col">PO Num</th>
+                  <th scope="col">Date</th>
                 </tr></thead>
                 <tbody>
-                  <!-- {{# each shipment in part.history }}
-                    <tr>
-                      <td>{{ subDate shipment.date }}</td>
-                      <td>{{ shipment.quantity }}</td>
-                      <td>{{ shipment.uom }}</td>
-                      <td>{{ shipment.transactionType }}</td>
-                      <td>{{ shipment.linkedOrder.company }}</td>
-                      <td>{{ shipment.linkedOrder.refNumber }}</td>
-                      <td>{{ shipment.processedInto.number }} - {{ shipment.processedInto.revision }}</td>
-                    </tr>
-                  {{/each}} -->
                   {{#each line in history}}
                     <tr>
                       <td>{{ line.quantity}}{{ line.uom }}</td>
@@ -106,6 +100,14 @@
           </div>
           <div class="tab-pane fade" id="usedIn">
             <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Kit Number</th>
+                  <th scope="col">Revision</th>
+                  <th scope="col">Qty Used</th>
+                </tr>
+              </thead>
+              <tbody>
               {{# each part.usedIn }}
                 <tr>
                   <td>{{ number }}</td>
@@ -113,10 +115,21 @@
                   <td>{{ quantityUsed }}</td>
                 </tr>
               {{/each}}
+              </tbody>
             </table>
           </div>
           <div class="tab-pane fade" id="reqs">
             <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Whse</th>
+                  <th scope="col">Job</th>
+                  <th scope="col">Date</th>
+                  <th scope="col">Issued</th>
+                  <th scope="col">Needed</th>
+                </tr>
+              </thead>
+              <tbody>
               {{#each part.currentRequirements }}
                 <tr>
                   <td>{{ location }}</td>
@@ -126,10 +139,22 @@
                   <td>{{ qty }}</td>
                 </tr>
               {{/each}}
+              </tbody>
             </table>
           </div>
           <div class="tab-pane fade" id="forKits">
             <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Item</th>
+                  <th scope="col">Revision</th>
+                  <th scope="col">Desc</th>
+                  <th scope="col">Due Date</th>
+                  <th scope="col">PO Number</th>
+                  <th scope="col">Total Qty</th>
+                </tr>
+              </thead>
+              <tbody>
               {{#each line in forKits}}
               <tr>
                 <td>{{ line.item.number }}</td>
@@ -140,13 +165,35 @@
                 <td>{{ line.totalQtyNeeded }}</td>
               </tr>
               {{/each}}
+              </tbody>
             </table>
           </div>
           <div class="tab-pane fade" id="inProcess">
             <h1>In Process will go here</h1>
           </div>
           <div class="tab-pane fade" id="files">
-            <h1>Files will go here</h1>
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">File Name</th>
+                  <th scope="col">Ref Num</th>
+                  <th scope="col">Category</th>
+                  <th scope="col">Format</th>
+                  <th scope="col">Added</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each part.files }}
+                <tr>
+                  <td><a href="https://minnesotabolt.com/docs/{{ name }}">{{ originalName }}</a></td>
+                  <td>{{ refNum }}</td>
+                  <td>{{ category }}</td>
+                  <td>{{ format }}</td>
+                  <td>{{ addedAt }}</td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
           </div>
           <div class="tab-pane fade" id="aliases">
             <h1>Aliases will go here</h1>
