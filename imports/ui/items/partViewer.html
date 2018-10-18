@@ -25,6 +25,14 @@
               {{ part.part.origin }}<br/>
               Location: {{ part.location.shelfId }}-{{ part.location.shelfNum }}<br/>
             </p>
+            {{#if part.aliases }}
+              <h6 class="card-subtitle">Also used as:</h6>
+              <p class="card-text">
+                {{#each part.aliases }}
+                  <a href="/items/{{ refId._str }}">{{ number }} - {{ revision }}</a><br/>
+                {{/each}}
+              </p>
+            {{/if}}
             <table>
                 <tbody>
                   <tr><td>Cost</td><td>{{ part.cost }}</td></tr>
@@ -56,9 +64,6 @@
           </li>
           <li class="nav-item">
             <a href="#files" class="nav-link" data-toggle="tab">Files</a>
-          </li>
-          <li class="nav-item">
-            <a href="#aliases" class="nav-link" data-toggle="tab">Aliases</a>
           </li>
         </ul>
 
@@ -194,13 +199,8 @@
                 {{/each}}
               </tbody>
             </table>
-          </div>
-          <div class="tab-pane fade" id="aliases">
-            <h1>Aliases will go here</h1>
-          </div>
-          
+          </div>        
         </div>
-        
       </div>
     </div>
   </div>
