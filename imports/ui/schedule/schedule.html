@@ -4,27 +4,27 @@
   <table class="table table-striped table-hover">
     <thead>
       <tr>
-        <th scope="col">PO</th>
-        <th scope="col">Qty</th>
-        <th scope="col">Item Number</th>
-        <th scope="col">Rev</th>
-        <th class="slice" scope="col">Name</th>
-        <th scope="col">Due</th>
-        <th scope="col">Status</th>
-        <th scope="col">Note</th>
+        <th class="col-prio-2" scope="col">PO</th>
+        <th class="col-prio-1" scope="col">Qty</th>
+        <th class="col-prio-1" scope="col">Item Number</th>
+        <th class="col-prio-1" scope="col">Rev</th>
+        <th class="slice col-prio-3" scope="col">Name</th>
+        <th class="col-prio-1" scope="col">Due</th>
+        <th class="col-prio-3" scope="col">Status</th>
+        <th class="col-prio-4" scope="col">Note</th>
       </tr>
     </thead>
     <tbody>
       {{#each schedule }}
       <tr class="{{ rowClass status }}">
-        <td><a href="/salesOrders/{{ orderId }}">{{ poNumber }}</a></td>
-        <td>{{ qty }}</td>
-        <td><a href="/items/{{ item.refId._str }}">{{ item.number }}</a></td>
-        <td>{{ item.revision }}</td>
-        <td><div class="slice">{{ item.simpleDescription }}</div></td>
-        <td>{{ subDate reqDate }}</td>
-        <td colspan="2">{{ status }}</td>
-        <td>
+        <td class="col-prio-2"><a href="/salesOrders/{{ orderId }}">{{ poNumber }}</a></td>
+        <td class="col-prio-1">{{ qty }}</td>
+        <td class="col-prio-1"><a href="/items/{{ item.refId._str }}">{{ item.number }}</a></td>
+        <td class="col-prio-1">{{ item.revision }}</td>
+        <td><div class="slice col-prio-3">{{ item.simpleDescription }}</div></td>
+        <td class="col-prio-1">{{ subDate reqDate }}</td>
+        <td class="col-prio-3" colspan="2">{{ status }}</td>
+        <td class="col-prio-3">
           <div class="btn-group">
             <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Update

@@ -73,3 +73,10 @@ td div.slice{
     overflow-y: visible;
   }
 }
+
+/* Table column hiding */
+@media(max-width: 992px){
+  .col-prio-3 {
+    display: none
+  }
+}
