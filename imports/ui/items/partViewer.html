@@ -113,7 +113,7 @@
               <tbody>
               {{# each part.usedIn }}
                 <tr>
-                  <td>{{ number }}</td>
+                  <td><a href="/items/{{ refId._str }}">{{ number }}</a></td>
                   <td>{{ revision }}</td>
                   <td>{{ quantityUsed }}</td>
                 </tr>
@@ -160,11 +160,11 @@
               <tbody>
               {{#each line in forKits}}
               <tr>
-                <td>{{ line.item.number }}</td>
+                <td><a href="/items/{{ line.item.refId._str }}">{{ line.item.number }}</a></td>
                 <td>{{ line.item.revision }}</td>
                 <td>{{ line.item.simpleDescription }}</td>
                 <td>{{ subDate line.reqDate }}</td>
-                <td>{{ line.custOrderNumber }}</td>
+                <td><a href="/salesOrders/{{ line.refId._str }}">{{ line.custOrderNumber }}</a></td>
                 <td>{{ line.totalQtyNeeded }}</td>
               </tr>
               {{/each}}
