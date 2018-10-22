@@ -61,5 +61,27 @@ Template.schedule.helpers({
     });
 
     return final;
-  },
+  }    
+});
+
+Template.schedule.events({
+  'click .status-btn': function(event, template){
+    newStatus = event.currentTarget.getAttribute("status");
+    var proceed = true;
+    if((newStatus.localeCompare("Shipped") == 0) || (newStatus.localeCompare("Closed") == 0)){
+      proceed = confirm(`Are you sure you want to mark this line ${newStatus}?`);
+    }
+    if(proceed == true){
+      Meteor.call('salesOrders.updateLineItem', {
+        lineItemId: event.currentTarget.parentElement.getAttribute('line-id'),
+        newStatus: newStatus
+      }), (err, res) => {
+        if(err){
+          alert(err);
+        } else { 
+          // success
+        }
+      }
+    }
+  }
 });

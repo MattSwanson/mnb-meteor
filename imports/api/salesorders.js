@@ -45,4 +45,17 @@ if(Meteor.isServer){
       }
     });
   });
+
+  Meteor.methods({
+    'salesOrders.updateLineItem'({ lineItemId, newStatus }){
+      id = new Mongo.ObjectID(lineItemId);
+      SalesOrders.update({
+        lineItems: {
+            $elemMatch: { _id: id }
+          }
+        }, {
+          $set: { "lineItems.$.status" : newStatus }
+        });
+      }
+  });
 }
