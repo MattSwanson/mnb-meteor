@@ -2,13 +2,11 @@
   <div class="container-fluid part-viewer">
     {{#if part.isActive}}
     {{else}}
-    <div class="row">
       <div class="alert alert-dismissible alert-warning">
         <button type="button" class="close" data-dismiss="alert">&times;</button>
         <h4 class="alert-heading">Warning!</h4>
         <p class="mb-0"><strong>This item is inactive</strong> - if you got here from an active kit or order please notify someone!</p>
       </div>
-    </div>
     {{/if}}
     <div class="row">
       <div class="side-panel col-sm-3">
