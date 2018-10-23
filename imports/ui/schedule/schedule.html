@@ -40,6 +40,11 @@
           </div>
         </td>
       </tr>
+      {{#if note }}
+        <tr class="table-info table-note">
+          <td colspan="9">{{ note }}</td>
+        </tr>
+      {{/if}}
       {{/each}}
     </tbody>
   </table>
