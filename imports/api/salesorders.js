@@ -15,7 +15,7 @@ if(Meteor.isServer){
     return SalesOrders.find({
       lineItems: {
         $elemMatch: {
-          status: 'Open'
+          status: { $in: ['Open', 'In Production', 'Waiting', 'Ready'] }
         }
       }
     }, {
