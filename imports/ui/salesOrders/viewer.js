@@ -30,3 +30,17 @@ Template.soViewer.helpers({
     return SalesOrders.findOne(oid);
   }
 });
+
+Template.soViewer.events({
+  'click .status-btn': function(event){
+    Meteor.call('salesOrders.updateLineItem', {
+      lineItemId: event.currentTarget.parentElement.getAttribute('line-id'),
+      newStatus: event.currentTarget.getAttribute('status')
+    }), (err, res) => {
+      if(err)
+        alert(err);
+      else
+        return false;
+    }
+  }
+})

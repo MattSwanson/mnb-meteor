@@ -28,6 +28,21 @@
             <td>{{ item.simpleDescription }}</td>
             <td>{{ subDate reqDate }}</td>
             <td>{{ status }}</td>
+            <td>
+              <div class="btn-group">
+                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Update
+                </button>
+                <div class="dropdown-menu" line-id="{{ _id._str }}">
+                  <button class="dropdown-item status-btn" type="button" status="Open">Open</button>
+                  <button class="dropdown-item status-btn" type="button" status="In Production">In Prod</button>
+                  <button class="dropdown-item status-btn" type="button" status="Waiting">Waiting</button>
+                  <button class="dropdown-item status-btn" type="button" status="Ready">Ready</button>
+                  <button class="dropdown-item status-btn" type="button" status="Shipped">Shipped</button>
+                  <button class="dropdown-item status-btn" type="button" status="Closed">Closed</button>
+                </div>
+              </div>
+            </td>
           </tr>
         {{/each}}
       </tbody>
