@@ -80,3 +80,8 @@ td div.slice{
     display: none
   }
 }
+
+table tr.table-note td {
+  padding: 0.25rem;
+  border-bottom: 2px solid black;
+}
