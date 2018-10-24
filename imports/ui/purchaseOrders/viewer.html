@@ -24,7 +24,7 @@
           {{#each order.lineItems }}
             <tr class="{{ rowClass status }}">
               <td>{{ qty }}{{ uom }}</td>
-              <td>{{ item.number }}</td>
+              <td><a href="/items/{{ item.refId._str }}">{{ item.number }}</a></td>
               <td>{{ item.revision }}</td>
               <td>{{ item.simpleDescription }}</td>
               <td>{{ subDate reqDate }}</td>

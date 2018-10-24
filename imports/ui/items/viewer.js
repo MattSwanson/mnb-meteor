@@ -125,4 +125,11 @@ Template.itemViewer.helpers({
     });
     return lines;
   }
-})
+});
+
+Template.partViewer.helpers({
+  historyIsFromPO(lineItem){
+    const a = ['Item Receipt', 'Processed'].indexOf(lineItem.transactionType);
+    return (a > -1);
+  }
+});

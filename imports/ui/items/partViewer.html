@@ -86,12 +86,20 @@
                       <td>{{ line.transactionType }}</td>
                       <td>
                         {{#if line.usedInKit.number }}
-                          {{ line.usedInKit.number }}
+                          <a href="/items/{{ line.usedInKit.refId._str }}">{{ line.usedInKit.number }}</a>
                         {{else}}
                           {{ line.linkedOrder.company }}
                         {{/if}}
                       </td>
-                      <td>{{ line.linkedOrder.refNumber }}</td>
+                      <td>
+                        {{#if line.linkedOrder.refNumber }}
+                          {{#if historyIsFromPO line }}
+                            <a href="/purchaseOrders/{{ line.linkedOrder.refId._str }}">{{ line.linkedOrder.refNumber }}</a>
+                          {{else}}
+                            <a href="/salesOrders/{{ line.linkedOrder.refId._str }}">{{ line.linkedOrder.refNumber }}</a>
+                          {{/if}}
+                        {{/if}}
+                      </td>
                       <td>{{ subDate line.date }}</td>
                     </tr>
                   {{/each}}
