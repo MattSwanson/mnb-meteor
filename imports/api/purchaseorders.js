@@ -37,7 +37,7 @@ if(Meteor.isServer){
         number: 1,
         'lineItems.$': 1
       }}).fetch();
-      const newQty = po[0].lineItems[0].recQty + recdQty;
+      const newQty = po[0].lineItems[0].recQty + Number(recdQty);
       PurchaseOrders.update({
         lineItems: {
           $elemMatch: { _id: id }
@@ -53,13 +53,14 @@ if(Meteor.isServer){
           refNumber: po[0].number,
           refId: po[0]._id
         },
-        date: recdDate
+        date: new Date(recdDate)
       };
       Items.update({ _id: po[0].lineItems[0].item.refId },{
         $push: {
           history: recpt
         }
       })
+      return "Success";
     }
   });
 }
