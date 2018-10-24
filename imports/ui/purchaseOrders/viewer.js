@@ -5,6 +5,10 @@ import { PurchaseOrders } from '../../api/purchaseorders.js';
 
 import './viewer.html';
 
+Template.registerHelper('todaysDate', () => {
+  return new Date().toISOString().substring(0,10);
+});
+
 FlowRouter.route('/purchaseOrders/:id', {
   name: 'salesOrder',
   action(){
@@ -14,7 +18,36 @@ FlowRouter.route('/purchaseOrders/:id', {
 
 Template.poViewer.events({
   'click .rec-btn': function(event, template){
-    console.log('a rec btn has been clicked');
+    $('.rec-dialog input#line-id').val(event.currentTarget.getAttribute('line-id'));
+    $('.rec-dialog').modal('show');
+  },
+  'click .save-btn': function(event, template){
+    // Get the qty and date from the forms and send them
+    // to the server via meteor call
+    var recdQty = parseInt($('.rec-dialog input#recd-qty').val());
+    if(!Number.isInteger(recdQty)){
+      alert("Qty is not a valid integer");
+      return;
+    }
+    var recdDate = $('.rec-dialog input#recd-date').val();
+    let d = new Date(recdDate);
+    if(isNaN(d.getMilliseconds())){ //Invalid Date
+      alert("Date is not valid");
+      return;
+    }
+    const lineId = $('.rec-dialog input#line-id').val();
+    Meteor.call('purchaseOrders.receiveItem', {
+      lineId: lineId,
+      recdQty: recdQty,
+      recdDate: recdDate
+    }, (err, res) => {
+      if(err)
+        alert(err);
+      else{
+        $('.rec-dialog').modal('hide');
+        $('.rec-dialog input#recd-qty').val('');
+      }
+    });
   }
 });
 

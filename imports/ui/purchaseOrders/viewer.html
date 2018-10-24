@@ -28,9 +28,9 @@
               <td>{{ item.revision }}</td>
               <td>{{ item.simpleDescription }}</td>
               <td>{{ subDate reqDate }}</td>
-              <td>{{ recdQty }}</td>
+              <td>{{ recQty }}</td>
               <td>{{ recdDate }}</td>
-              <td><button class="btn btn-primary btn-sm rec-btn">Receive</button></td>
+              <td><button class="btn btn-primary btn-sm rec-btn" line-id="{{ _id._str }}">Receive</button></td>
             </tr>
           {{/each}}
         </tbody>
@@ -38,5 +38,28 @@
     {{else}}
       <h1>Loading Order...</h1>
     {{/if}}
+    </div>
+    <div class="modal rec-dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Receive Items</h5>
+            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group rec-dialog-form">
+                <input type="text" class="form-control" placeholder="Received Qty" id="recd-qty">
+                <input type="text" class="form-control" placeholder="Received Date" value="{{ todaysDate }}" id="recd-date">
+            </div>
+            <input type="hidden" id="line-id">
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary save-btn" type="button">Save Changes</button>
+            <button class="btn btn-secondary cancel-btn" type="button" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
     </div>
   </template>
