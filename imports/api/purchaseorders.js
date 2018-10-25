@@ -25,6 +25,16 @@ if(Meteor.isServer){
     return PurchaseOrders.find(oid);
   });
 
+  Meteor.publish('openPurchaseOrdersContainingItem', function(id){
+    oid = new Mongo.ObjectID(id);
+    return PurchaseOrders.find({
+      $and: [
+        { lineItems: { $elemMatch: { complete: false }}},
+        { lineItems: { $elemMatch: { 'item.refId': oid }}}
+      ]
+    });
+  });
+
   Meteor.methods({
     'purchaseOrders.receiveItem'({ lineId, recdQty, recdDate }){
       console.log(lineId);

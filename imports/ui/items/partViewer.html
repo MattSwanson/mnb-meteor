@@ -31,6 +31,16 @@
                 {{/each}}
               </p>
             {{/if}}
+            
+            {{#let orders=getPartsOnOrder }}
+              {{#if orders }}
+              <h5 class="card-title">On Order</h5>
+                {{#each orders }}
+                  <a href="/purchaseOrders/{{ poId._str }}">{{ poNumber }} - {{ quantity }}pcs</a>
+                {{/each}}
+              {{/if}}
+            {{/let}}
+            
             <table>
                 <tbody>
                   <tr><td>Cost</td><td>{{ part.cost }}</td></tr>

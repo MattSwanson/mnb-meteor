@@ -7,6 +7,7 @@ import './partViewer.html';
 import './kitViewer.html';
 import { Items } from '../../api/items';
 import { SalesOrders } from '../../api/salesorders';
+import { PurchaseOrders } from '../../api/purchaseorders';
 
 FlowRouter.route('/items/:id', {
   name: 'item',
@@ -23,6 +24,7 @@ Template.itemViewer.onCreated(function(){
     Meteor.subscribe('itemAliases', id);
     // Get all sales orders with open lines containing kits using the item
     Meteor.subscribe('salesOrdersContainingItems', id);
+    Meteor.subscribe('openPurchaseOrdersContainingItem', id);
   })
 });
 
@@ -131,5 +133,33 @@ Template.partViewer.helpers({
   historyIsFromPO(lineItem){
     const a = ['Item Receipt', 'Processed'].indexOf(lineItem.transactionType);
     return (a > -1);
+  },
+  getPartsOnOrder(){
+    const id = FlowRouter.getParam('id');
+    const itemId = new Mongo.ObjectID(id);
+    //const baseItem = Items.findOne({_id: itemId});
+    //const aliases = baseItem.aliases;
+
+    let pos = PurchaseOrders.find({
+      $and: [
+        { lineItems: { $elemMatch: { complete: false }}},
+        { lineItems: { $elemMatch: { 'item.refId': itemId }}}
+      ]
+    },{ fields: { _id: 1, number: 1, lineItems: 1 }}).fetch();
+    // Reduce down to just the line items for our item
+    pos = pos.reduce((acc, val) => {
+      val.lineItems.forEach((line) => {
+        if(line.item.refId._str == itemId._str && line.complete == false){
+          let newLine = {
+            poId: val._id,
+            poNumber: val.number,
+            quantity: line.qty - line.recQty
+          };
+          acc.push(newLine);
+        }
+      });
+      return acc;
+    }, []);
+    return pos;
   }
 });
