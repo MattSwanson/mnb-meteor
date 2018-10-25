@@ -61,6 +61,18 @@ if(Meteor.isServer){
         }
       })
       return "Success";
+    },
+    'purchaseOrders.deleteLineItem'({ lineId }){
+      const id = new Mongo.ObjectID(lineId);
+      PurchaseOrders.update({
+        lineItems: {
+          $elemMatch: { _id: id }
+        }
+      }, {
+        $pull: {
+          lineItems: { _id: id }
+        }
+      });
     }
   });
 }

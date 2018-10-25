@@ -30,7 +30,10 @@
               <td>{{ subDate reqDate }}</td>
               <td>{{ recQty }}</td>
               <td>{{ recdDate }}</td>
-              <td><button class="btn btn-primary btn-sm rec-btn" line-id="{{ _id._str }}">Receive</button></td>
+              <td>
+                <button class="btn btn-primary btn-sm rec-btn" line-id="{{ _id._str }}">Receive</button>
+                <i class="fa fa-trash fa-lg delete-line" line-id="{{ _id._str }}"></i>
+              </td>
             </tr>
           {{/each}}
         </tbody>

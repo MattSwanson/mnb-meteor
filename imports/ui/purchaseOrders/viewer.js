@@ -48,6 +48,18 @@ Template.poViewer.events({
         $('.rec-dialog input#recd-qty').val('');
       }
     });
+  },
+  'click .delete-line':function(event){
+    const c = confirm(`Are you sure you want to delete this line?`);
+    if(c){
+      const lineId = event.currentTarget.getAttribute('line-id');
+      Meteor.call('purchaseOrders.deleteLineItem', {
+        lineId: lineId
+      }, (err, res) => {
+        if(err)
+          alert(err);
+      });
+    }
   }
 });
 
