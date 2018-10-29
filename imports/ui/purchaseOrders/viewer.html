@@ -13,28 +13,19 @@
           <tr>
             <th>Qty</th>
             <th>Item</th>
-            <th>Rev</th>
             <th>Desc</th>
             <th>Due Date</th>
             <th>Recd Qty</th>
-            <th>Rec Date</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
           {{#each order.lineItems }}
-            <tr class="{{ rowClass status }}">
-              <td>{{ qty }}{{ uom }}</td>
-              <td><a href="/items/{{ item.refId._str }}">{{ item.number }}</a></td>
-              <td>{{ item.revision }}</td>
-              <td>{{ item.simpleDescription }}</td>
-              <td>{{ subDate reqDate }}</td>
-              <td>{{ recQty }}</td>
-              <td>{{ recdDate }}</td>
-              <td>
-                <button class="btn btn-primary btn-sm rec-btn" line-id="{{ _id._str }}">Receive</button>
-                <i class="fa fa-trash fa-lg delete-line" line-id="{{ _id._str }}"></i>
-              </td>
-            </tr>
+            {{#if process }}
+              {{> procOrderLine }}
+            {{else}}
+              {{> purchOrderLine }}
+            {{/if}}
           {{/each}}
         </tbody>
       </table>
@@ -65,4 +56,33 @@
         </div>
       </div>
     </div>
+  </template>
+
+  <template name="purchOrderLine">
+    <tr>
+        <td>{{ qty }}{{ uom }}</td>
+        <td><a href="/items/{{ item.refId._str }}">{{ item.number }} - {{ item.revision }}</a></td>
+        <td>{{ item.revision }}</td>
+        <td>{{ item.simpleDescription }}</td>
+        <td>{{ subDate reqDate }}</td>
+        <td>{{ recQty }}</td>
+        <td>
+          <button class="btn btn-primary btn-sm rec-btn" line-id="{{ _id._str }}">Receive</button>
+          <i class="fa fa-trash fa-lg delete-line" line-id="{{ _id._str }}"></i>
+        </td>
+    </tr>
+  </template>
+
+  <template name="procOrderLine">
+      <tr>
+          <td>{{ qty }}{{ uom }}</td>
+          <td><a href="/items/{{ item.refId._str }}">{{ item.number }} - {{ item.revision }} </a></td>
+          <td>{{ process }}</td>
+          <td>{{ subDate reqDate }}</td>
+          <td>{{ recQty }}</td>
+          <td>
+            <button class="btn btn-primary btn-sm rec-btn" line-id="{{ _id._str }}">Receive</button>
+            <i class="fa fa-trash fa-lg delete-line" line-id="{{ _id._str }}"></i>
+          </td>
+      </tr>
   </template>
