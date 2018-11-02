@@ -65,7 +65,8 @@ if(Meteor.isServer){
         },
         date: new Date(recdDate)
       };
-      Items.update({ _id: po[0].lineItems[0].item.refId },{
+      const refId = (po[0].lineItems[0].process) ? po[0].lineItems[0].targetItem.refId : po[0].lineItems[0].item.refId
+      Items.update({ _id: refId },{
         $push: {
           history: recpt
         }
