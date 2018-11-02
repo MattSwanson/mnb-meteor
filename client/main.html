@@ -9,16 +9,11 @@
 
 <body>
   {{> nav}}
-  <div class="jumbotron">
-    <h1>Welcome to Meteor!</h1>
-
-    {{> hello}}
-  </div>
 </body>
 
-
-<template name="hello">
-  <button type="button" class="btn btn-primary">Click Me</button>
-  <p>You've pressed the button {{counter}} times.</p>
+<template name="MainContent">
+  {{> Template.dynamic template=main }}
 </template>
+
+
 

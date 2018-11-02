@@ -1,0 +1,23 @@
+<template name="soIndex">
+  <div class="container">
+    <h1>Open Sales Orders</h1>
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>PO</th>
+          <th>Order Date</th>
+          <th>Customer</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each orders}}
+          <tr>
+            <td><a href="/salesOrders/{{ _id._str }}">{{ custOrderNumber }}</a></td>
+            <td>{{ subDate orderDate }}</td>
+            <td>{{ customer.name }}</td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</template>

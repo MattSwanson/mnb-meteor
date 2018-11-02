@@ -1,8 +1,18 @@
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 
+import './router.js';
 import '../imports/ui/nav.js';
 import './main.html';
+import '../imports/ui/home.html';
+import '../imports/api/salesorders.js';
+import '../imports/ui/schedule/schedule.js';
+import '../imports/ui/salesOrders/viewer.js';
+import '../imports/ui/salesOrders/index.js';
+import '../imports/ui/purchaseOrders/index.js';
+import '../imports/ui/purchaseOrders/viewer.js';
+import '../imports/ui/items/viewer.js';
+import '../imports/ui/items/needs.js';
 
 Template.hello.onCreated(function helloOnCreated() {
   // counter starts at 0

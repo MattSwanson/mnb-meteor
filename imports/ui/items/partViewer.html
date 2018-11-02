@@ -1,0 +1,223 @@
+<template name="partViewer">
+  <div class="container-fluid part-viewer">
+    {{#if part.isActive}}
+    {{else}}
+      <div class="alert alert-dismissible alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <h4 class="alert-heading">Warning!</h4>
+        <p class="mb-0"><strong>This item is inactive</strong> - if you got here from an active kit or order please notify someone!</p>
+      </div>
+    {{/if}}
+    <div class="row">
+      <div class="side-panel col-sm-3">
+        <!-- Basic part information will go here -->
+        <div class="card mb-3">
+          <h3 class="card-header">{{ part.number }} - {{ part.revision }}</h3>
+          <div class="card-body">
+            <h5 class="card-title">{{ part.part.description }}</h5>
+            <h6 class="card-subtitle">{{ part.part.size }}</h6>
+            <p class="card-text">
+              {{#each finish in part.part.finishes }}
+                {{ finish }}<br/>
+              {{/each}}
+              {{ part.part.origin }}<br/>
+              Location: {{ part.location.shelfId }}-{{ part.location.shelfNum }}<br/>
+            </p>
+            {{#if part.aliases }}
+              <h6 class="card-subtitle">Also used as:</h6>
+              <p class="card-text">
+                {{#each part.aliases }}
+                  <a href="/items/{{ refId._str }}">{{ number }} - {{ revision }}</a><br/>
+                {{/each}}
+              </p>
+            {{/if}}
+            
+            {{#let orders=getPartsOnOrder }}
+              {{#if orders }}
+              <h5 class="card-title">On Order</h5>
+                {{#each orders }}
+                  <a href="/purchaseOrders/{{ poId._str }}">{{ poNumber }} - {{ quantity }}pcs</a>
+                {{/each}}
+              {{/if}}
+            {{/let}}
+            
+            <table>
+                <tbody>
+                  <tr><td>Cost</td><td>{{ part.cost }}</td></tr>
+                  <tr><td>Sale Price</td><td>{{ part.salePrice }}</td></tr>
+                </tbody>
+              </table>
+            <p class="card-text"><small>Effective: {{ subDate part.effectiveDate }}</small></p>
+          </div>
+        </div>
+        
+      </div>
+      <div class="rest col-sm-9">
+        <!-- Other info like history and reqs will render into here -->
+        <ul class="nav nav-tabs">
+          <li class="nav-item">
+            <a href="#history" class="nav-link active show" data-toggle="tab">History</a>
+          </li>
+          <li class="nav-item">
+            <a href="#usedIn" class="nav-link" data-toggle="tab">Kits Used In</a>
+          </li>
+          <li class="nav-item">
+            <a href="#reqs" class="nav-link" data-toggle="tab">Requirements</a>
+          </li>
+          <li class="nav-item">
+            <a href="#forKits" class="nav-link" data-toggle="tab">For Kits</a>
+          </li>
+          <li class="nav-item">
+            <a href="#inProcess" class="nav-link" data-toggle="tab">In Process</a>
+          </li>
+          <li class="nav-item">
+            <a href="#files" class="nav-link" data-toggle="tab">Files</a>
+          </li>
+        </ul>
+
+        <div class="tab-content" id="partTabContent">
+        
+          <div class="tab-pane fade active show" id="history">
+            {{#if history}}
+              <table class="table table-hover">
+                <thead><tr>
+                  <th scope="col">Qty Used</th>
+                  <th scope="col">Item</th>
+                  <th scope="col">Use</th>
+                  <th scope="col">Destination</th>
+                  <th scope="col">PO Num</th>
+                  <th scope="col">Date</th>
+                </tr></thead>
+                <tbody>
+                  {{#each line in history}}
+                    <tr>
+                      <td>{{ line.quantity}}{{ line.uom }}</td>
+                      <td>{{ line.itemNumber }} - {{ line.itemRevision }}</td>
+                      <td>{{ line.transactionType }}</td>
+                      <td>
+                        {{#if line.usedInKit.number }}
+                          <a href="/items/{{ line.usedInKit.refId._str }}">{{ line.usedInKit.number }}</a>
+                        {{else}}
+                          {{ line.linkedOrder.company }}
+                        {{/if}}
+                      </td>
+                      <td>
+                        {{#if line.linkedOrder.refNumber }}
+                          {{#if historyIsFromPO line }}
+                            <a href="/purchaseOrders/{{ line.linkedOrder.refId._str }}">{{ line.linkedOrder.refNumber }}</a>
+                          {{else}}
+                            <a href="/salesOrders/{{ line.linkedOrder.refId._str }}">{{ line.linkedOrder.refNumber }}</a>
+                          {{/if}}
+                        {{/if}}
+                      </td>
+                      <td>{{ subDate line.date }}</td>
+                    </tr>
+                  {{/each}}
+                </tbody>
+              </table>
+            {{else}}
+              <h1>Loading Item History...</h1>
+            {{/if}}
+          </div>
+          <div class="tab-pane fade" id="usedIn">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Kit Number</th>
+                  <th scope="col">Revision</th>
+                  <th scope="col">Qty Used</th>
+                </tr>
+              </thead>
+              <tbody>
+              {{# each part.usedIn }}
+                <tr>
+                  <td><a href="/items/{{ refId._str }}">{{ number }}</a></td>
+                  <td>{{ revision }}</td>
+                  <td>{{ quantityUsed }}</td>
+                </tr>
+              {{/each}}
+              </tbody>
+            </table>
+          </div>
+          <div class="tab-pane fade" id="reqs">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Whse</th>
+                  <th scope="col">Job</th>
+                  <th scope="col">Date</th>
+                  <th scope="col">Issued</th>
+                  <th scope="col">Needed</th>
+                </tr>
+              </thead>
+              <tbody>
+              {{#each part.currentRequirements }}
+                <tr>
+                  <td>{{ location }}</td>
+                  <td>{{ job }}</td>
+                  <td>{{ subDate needDate }}</td>
+                  <td>{{ issuedQty }}</td>
+                  <td>{{ qty }}</td>
+                </tr>
+              {{/each}}
+              </tbody>
+            </table>
+          </div>
+          <div class="tab-pane fade" id="forKits">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Item</th>
+                  <th scope="col">Revision</th>
+                  <th scope="col">Desc</th>
+                  <th scope="col">Due Date</th>
+                  <th scope="col">PO Number</th>
+                  <th scope="col">Total Qty</th>
+                </tr>
+              </thead>
+              <tbody>
+              {{#each line in forKits}}
+              <tr>
+                <td><a href="/items/{{ line.item.refId._str }}">{{ line.item.number }}</a></td>
+                <td>{{ line.item.revision }}</td>
+                <td>{{ line.item.simpleDescription }}</td>
+                <td>{{ subDate line.reqDate }}</td>
+                <td><a href="/salesOrders/{{ line.refId._str }}">{{ line.custOrderNumber }}</a></td>
+                <td>{{ line.totalQtyNeeded }}</td>
+              </tr>
+              {{/each}}
+              </tbody>
+            </table>
+          </div>
+          <div class="tab-pane fade" id="inProcess">
+            <h1>In Process will go here</h1>
+          </div>
+          <div class="tab-pane fade" id="files">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">File Name</th>
+                  <th scope="col">Ref Num</th>
+                  <th scope="col">Category</th>
+                  <th scope="col">Format</th>
+                  <th scope="col">Added</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each part.files }}
+                <tr>
+                  <td><a href="https://minnesotabolt.com/docs/{{ name }}">{{ originalName }}</a></td>
+                  <td>{{ refNum }}</td>
+                  <td>{{ category }}</td>
+                  <td>{{ format }}</td>
+                  <td>{{ addedAt }}</td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>        
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

@@ -1,0 +1,88 @@
+<template name="poViewer">
+    <div class="container">
+      {{#if order }}
+      <h1>PO {{ order.number }}</h1>
+      <h2>{{ order.vendor.name }}</h2>
+      <h2>Order Date: 
+        {{#if order.orderDate }}
+          {{ subDate order.orderDate }}
+        {{/if}}
+      </h2>
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Qty</th>
+            <th>Item</th>
+            <th>Desc</th>
+            <th>Due Date</th>
+            <th>Recd Qty</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each order.lineItems }}
+            {{#if process }}
+              {{> procOrderLine }}
+            {{else}}
+              {{> purchOrderLine }}
+            {{/if}}
+          {{/each}}
+        </tbody>
+      </table>
+    {{else}}
+      <h1>Loading Order...</h1>
+    {{/if}}
+    </div>
+    <div class="modal rec-dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Receive Items</h5>
+            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group rec-dialog-form">
+                <input type="text" class="form-control" placeholder="Received Qty" id="recd-qty">
+                <input type="text" class="form-control" placeholder="Received Date" value="{{ todaysDate }}" id="recd-date">
+            </div>
+            <input type="hidden" id="line-id">
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary save-btn" type="button">Save Changes</button>
+            <button class="btn btn-secondary cancel-btn" type="button" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template name="purchOrderLine">
+    <tr>
+        <td>{{ qty }}{{ uom }}</td>
+        <td><a href="/items/{{ item.refId._str }}">{{ item.number }} - {{ item.revision }}</a></td>
+        <td>{{ item.revision }}</td>
+        <td>{{ item.simpleDescription }}</td>
+        <td>{{ subDate reqDate }}</td>
+        <td>{{ recQty }}</td>
+        <td>
+          <button class="btn btn-primary btn-sm rec-btn" line-id="{{ _id._str }}">Receive</button>
+          <i class="fa fa-trash fa-lg delete-line" line-id="{{ _id._str }}"></i>
+        </td>
+    </tr>
+  </template>
+
+  <template name="procOrderLine">
+      <tr>
+          <td>{{ qty }}{{ uom }}</td>
+          <td><a href="/items/{{ item.refId._str }}">{{ item.number }} - {{ item.revision }} </a></td>
+          <td>{{ process }}</td>
+          <td>{{ subDate reqDate }}</td>
+          <td>{{ recQty }}</td>
+          <td>
+            <button class="btn btn-primary btn-sm rec-btn" line-id="{{ _id._str }}">Receive</button>
+            <i class="fa fa-trash fa-lg delete-line" line-id="{{ _id._str }}"></i>
+          </td>
+      </tr>
+  </template>

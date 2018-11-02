@@ -1,0 +1,60 @@
+<template name="soViewer">
+  <div class="container">
+    {{#if order }}
+    <h1>PO {{ order.custOrderNumber }}</h1>
+    <h2>{{ order.customer.name }}</h2>
+    <h2>Order Date: 
+      {{#if order.orderDate }}
+        {{ subDate order.orderDate }}
+      {{/if}}
+    </h2>
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>Qty</th>
+          <th>Item</th>
+          <th>Rev</th>
+          <th>Desc</th>
+          <th>Due Date</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each order.lineItems }}
+          <tr class="{{ rowClass status }}">
+            <td>{{ qty }}</td>
+            <td><a href="/items/{{ item.refId._str }}">{{ item.number }}</a></td>
+            <td>{{ item.revision }}</td>
+            <td>{{ item.simpleDescription }}</td>
+            <td>{{ subDate reqDate }}</td>
+            <td>{{ status }}</td>
+            <td>
+              <div class="btn-group">
+                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Update
+                </button>
+                <div class="dropdown-menu" line-id="{{ _id._str }}">
+                  <button class="dropdown-item status-btn" type="button" status="Open">Open</button>
+                  <button class="dropdown-item status-btn" type="button" status="In Production">In Prod</button>
+                  <button class="dropdown-item status-btn" type="button" status="Waiting">Waiting</button>
+                  <button class="dropdown-item status-btn" type="button" status="Ready">Ready</button>
+                  <button class="dropdown-item status-btn" type="button" status="Shipped">Shipped</button>
+                  <button class="dropdown-item status-btn" type="button" status="Closed">Closed</button>
+                </div>
+              </div>
+            </td>
+          </tr>
+          {{#if note}}
+            <tr class="table-info table-note">
+              <td colspan="7">{{ note }}</td>
+            </tr>
+          {{/if}}
+        {{/each}}
+      </tbody>
+    </table>
+  {{else}}
+    <h1>Loading Order...</h1>
+  {{/if}}
+  </div>
+</template>
