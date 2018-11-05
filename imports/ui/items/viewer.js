@@ -25,6 +25,7 @@ Template.itemViewer.onCreated(function(){
     // Get all sales orders with open lines containing kits using the item
     Meteor.subscribe('salesOrdersContainingItems', id);
     Meteor.subscribe('openPurchaseOrdersContainingItem', id);
+    Meteor.subscribe('openPurchaseOrdersWithItemInProcess', id);
   })
 });
 
@@ -153,6 +154,31 @@ Template.partViewer.helpers({
           let newLine = {
             poId: val._id,
             poNumber: val.number,
+            quantity: line.qty - line.recQty
+          };
+          acc.push(newLine);
+        }
+      });
+      return acc;
+    }, []);
+    return pos;
+  },
+
+  getPartsInProcess(){
+    const id = FlowRouter.getParam('id');
+    const itemId = new Mongo.ObjectID(id);
+    let pos = PurchaseOrders.find({
+      $and: [
+        { lineItems: { $elemMatch: { complete: false }}},
+        { lineItems: { $elemMatch: { 'targetItem.refId': itemId }}}
+      ]
+    },{ fields: { _id: 1, number: 1, lineItems: 1 }}).fetch();
+    pos = pos.reduce((acc, po) => {
+      po.lineItems.forEach((line) => {
+        if(line.targetItem.refId._str == itemId._str && line.complete == false){
+          let newLine = {
+            poId: po._id,
+            poNumber: po.number,
             quantity: line.qty - line.recQty
           };
           acc.push(newLine);

@@ -76,7 +76,7 @@
   <template name="procOrderLine">
       <tr>
           <td>{{ qty }}{{ uom }}</td>
-          <td><a href="/items/{{ item.refId._str }}">{{ item.number }} - {{ item.revision }} </a></td>
+          <td><a href="/items/{{ targetItem.refId._str }}">{{ targetItem.number }} - {{ targetItem.revision }} </a></td>
           <td>{{ process }}</td>
           <td>{{ subDate reqDate }}</td>
           <td>{{ recQty }}</td>

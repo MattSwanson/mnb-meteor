@@ -35,6 +35,16 @@ if(Meteor.isServer){
     });
   });
 
+  Meteor.publish('openPurchaseOrdersWithItemInProcess', function(id){
+    oid = new Mongo.ObjectID(id);
+    return PurchaseOrders.find({
+      $and: [
+        { lineItems: { $elemMatch: { complete: false }}},
+        { lineItems: { $elemMatch: { 'targetItem.refId': oid }}}
+      ]
+    });
+  });
+
   Meteor.methods({
     'purchaseOrders.receiveItem'({ lineId, recdQty, recdDate }){
       console.log(lineId);
@@ -65,7 +75,8 @@ if(Meteor.isServer){
         },
         date: new Date(recdDate)
       };
-      Items.update({ _id: po[0].lineItems[0].item.refId },{
+      const refId = (po[0].lineItems[0].process) ? po[0].lineItems[0].targetItem.refId : po[0].lineItems[0].item.refId
+      Items.update({ _id: refId },{
         $push: {
           history: recpt
         }
