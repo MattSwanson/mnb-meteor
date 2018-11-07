@@ -84,7 +84,7 @@ Template.partEntry.events({
           alert(err.message);
         return;
       }else{
-        console.log('Item added successfully');
+        FlowRouter.go(`/items/${res._str}`);
       }
     });
   },

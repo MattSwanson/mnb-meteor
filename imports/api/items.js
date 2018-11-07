@@ -49,13 +49,12 @@ if(Meteor.isServer){
 
   Meteor.methods({
     'item.createPart': function(obj){
-      console.log(obj);
       obj._id = new Mongo.ObjectID();
       const result = Items.find({ number: obj.number, revision: obj.revision}).fetch();
       if(result.length > 0){
         throw new Meteor.Error('item-revision-exists', 'Item revision already exists in collection');
       }
-      Items.insert(obj, (err, res) => {
+      return Items.insert(obj, (err, res) => {
         if(err)
           return err;
         else{
@@ -67,10 +66,8 @@ if(Meteor.isServer){
           SearchIndex.insert(entry, (err, r) => {
             if(err)
               return err;
-            else{
-              return res;
-            }
           });
+          return res;
         }
       });
     },
