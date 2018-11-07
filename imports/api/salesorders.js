@@ -32,10 +32,13 @@ if(Meteor.isServer){
   Meteor.publish('salesOrdersContainingItems', function(id){
     console.log('Publishing Sales Orders Containing Items');
     var kitsIn = Items.find({ _id: new Mongo.ObjectID(id) }, {_id: 0, 'usedIn.refId': 1, 'usedIn.quantityUsed': 1}).fetch();
-    kitsIds = kitsIn[0].usedIn.reduce((acc,val)=>{
-      acc.push(val.refId);
-      return acc;
-    }, []);
+    var kitsIds = [];
+    if(kitsIn[0].usedIn){
+      kitsIds = kitsIn[0].usedIn.reduce((acc,val)=>{
+        acc.push(val.refId);
+        return acc;
+      }, []);
+    }
     return SalesOrders.find({
       lineItems:{
         $elemMatch:{
