@@ -13,6 +13,7 @@ import '../imports/ui/purchaseOrders/index.js';
 import '../imports/ui/purchaseOrders/viewer.js';
 import '../imports/ui/items/viewer.js';
 import '../imports/ui/items/needs.js';
+import '../imports/ui/items/partEntry.js';
 
 Template.hello.onCreated(function helloOnCreated() {
   // counter starts at 0

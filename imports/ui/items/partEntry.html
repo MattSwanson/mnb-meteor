@@ -1,0 +1,165 @@
+<template name="partEntry">
+  <div class="container-fluid">
+    <form class="needs-validation" novalidate>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label for="partNumber" class="input-group-text">Part Number</label>
+        </div>
+        <input type="text" class="form-control" name="partNumber" required>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label for="description" class="input-group-text">Description</label>
+        </div>
+        <input type="text" class="form-control" name="description" required>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label for="size" class="input-group-text">Size</label>
+        </div>
+        <input type="text" class="form-control" name="size" required>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label for="material" class="input-group-text">Material</label>
+        </div>
+        <select name="material" class="custom-select">
+          {{#each materials }}
+            <option value="{{ _id._str }}">{{ name }}</option>
+          {{else}}
+            <option><i class="fa fa-spinner"></i>Loading...</option>
+          {{/each}}
+        </select>
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary new-material-btn" type="button">New</button>
+        </div>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label for="coating" class="input-group-text">Coating</label>
+        </div>
+        <select name="coating" class="custom-select">
+          <option value="0" selected>None</option>
+          {{#each coatings }}
+            <option value="{{ _id._str }}">{{ name }}</option>
+          {{else}}
+            <option><i class="fa fa-spinner fa-spin"></i>Loading...</option>
+          {{/each}}
+        </select>
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary new-coating-btn" type="button">New</button>
+        </div>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label for="addlProcess" class="input-group-text">Addl Process</label>
+        </div>
+        <select name="addlProcess" class="custom-select">
+          <option value="0" selected>None</option>
+          {{#each secondaryProcesses }}
+            <option value="{{ _id._str }}">{{ name }}</option>
+          {{else}}
+            <option><i class="fa fa-spinner fa-spin"></i>Loading...</option>
+          {{/each}}
+        </select>
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary new-process-btn" type="button">New</button>
+        </div>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label for="origin" class="input-group-text">Origin</label>
+        </div>
+        <input type="text" class="form-control" name="origin" required>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label for="revision" class="input-group-text">Revision</label>
+        </div>
+        <input type="text" class="form-control" name="revision" required>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label for="effectiveDate" class="input-group-text">Effective Date</label>
+        </div>
+        <input type="text" class="form-control" name="effectiveDate" required>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label for="cost" class="input-group-text">Cost</label>
+        </div>
+        <input type="text" class="form-control" name="cost" required>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label for="salePrice" class="input-group-text">Sale Price</label>
+        </div>
+        <input type="text" class="form-control" name="salePrice" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+  <div class="modal new-material-dlg">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">New Material</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group new-material-dlg-form">
+              <input type="text" class="form-control" placeholder="New Material Name" id="new-name">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary save-btn" type="button">Submit</button>
+          <button class="btn btn-secondary cancel-btn" type="button" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal new-coating-dlg">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">New Coating</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group new-coating-dlg-form">
+              <input type="text" class="form-control" placeholder="New Coating Name" id="new-name">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary save-btn" type="button">Submit</button>
+          <button class="btn btn-secondary cancel-btn" type="button" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal new-process-dlg">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">New Process</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group new-process-dlg-form">
+              <input type="text" class="form-control" placeholder="New Process Name" id="new-name">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary save-btn" type="button">Submit</button>
+          <button class="btn btn-secondary cancel-btn" type="button" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
