@@ -39,33 +39,39 @@ Template.itemViewer.helpers({
   // Get item history which includes it's aliases
   aHistory(){
 
-    // Get this items history
-    const id = FlowRouter.getParam('id');
-    const itemId = new Mongo.ObjectID(id);
-    const baseItem = Items.findOne({_id: itemId});
-    const aliases = baseItem.aliases;
-    let history = baseItem.history; //.fetch();
-    history.forEach((shipment) => {
-      shipment.itemNumber = baseItem.number;
-      shipment.itemRevision = baseItem.revision;
-    });
-    // Step through each alias
-    aliases.forEach((alias) => {
-      let ai = Items.findOne({_id: alias.refId});
-      //  -  get its history
-      let aliasHistory = ai.history;
-      aliasHistory.forEach((shipment) => {
-        shipment.itemNumber = alias.number;
-        shipment.itemRevision = alias.revision;
+    let history = [];
+    try{
+      // Get this items history
+      const id = FlowRouter.getParam('id');
+      const itemId = new Mongo.ObjectID(id);
+      const baseItem = Items.findOne({_id: itemId});
+      //const aliases = baseItem.aliases;
+      const aliases = (baseItem.aliases) ? baseItem.aliases : [];
+      if(baseItem.history)
+        history = baseItem.history; //.fetch();
+      history.forEach((shipment) => {
+        shipment.itemNumber = baseItem.number;
+        shipment.itemRevision = baseItem.revision;
       });
-      // Combine all histories into one array
-      history = history.concat(aliasHistory);
-    });
-    // Sort the array by shipment date and then return it to the template
-    history.sort((a,b)=>{
-      return b.date - a.date;
-    });
-    
+      // Step through each alias
+      aliases.forEach((alias) => {
+        let ai = Items.findOne({_id: alias.refId});
+        //  -  get its history
+        let aliasHistory = ai.history;
+        aliasHistory.forEach((shipment) => {
+          shipment.itemNumber = alias.number;
+          shipment.itemRevision = alias.revision;
+        });
+        // Combine all histories into one array
+        history = history.concat(aliasHistory);
+      });
+      // Sort the array by shipment date and then return it to the template
+      history.sort((a,b)=>{
+        return b.date - a.date;
+      });
+    }catch(err){
+      console.error(err);
+    }
     return history;
   },
 
@@ -79,6 +85,9 @@ Template.itemViewer.helpers({
 
     // Get a list of all ids of kits which the item is used in
     let item = Items.findOne({ _id: itemId });
+    // If this item is not used in kits just peace out of here
+    if(!item.usedIn)
+      return [];
     var kitIds = item.usedIn.reduce((acc, val) => {
       acc.push(val.refId);
       return acc;
