@@ -82,6 +82,32 @@ if(Meteor.isServer){
     'item.newProcess': function({ name }){
       const newId = SecondaryProcesses.insert({ _id: new Mongo.ObjectID(), name: name });
       return newId;
+    },
+    // This could be the same as the createPart function since they are both add items -
+    // But at some point when we validate these they need to valdiated differently so we'll
+    // Just make them separate functions for now anyhow...
+    'item.createKit': function(item){
+      item._id = new Mongo.ObjectID();
+      const result = Items.find({ number: item.number, revision: item.revision}).fetch();
+      if(result.length > 0){
+        throw new Meteor.Error('item-revision-exists', 'Item revision already exists in collection');
+      }
+      return Items.insert(item, (err, res) => {
+        if(err)
+          return err;
+        else{
+          const entry = {
+            name: `${item.number} - ${item.revision} - ${item.simpleDescription}`,
+            type: "Item",
+            recordId: res
+          };
+          SearchIndex.insert(entry, (err, r) => {
+            if(err)
+              return err;
+          });
+          return res;
+        }
+      });
     }
   });
 }
