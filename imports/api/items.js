@@ -47,6 +47,11 @@ if(Meteor.isServer){
     return SecondaryProcesses.find({}, { sort: { name: 1 }});
   });
 
+  Meteor.publish('activeRevisions', function(){
+    console.log('Publishing Active Revisions');
+    return Items.find({ isActive: true }, { fields: { _id: 1, number: 1, revision: 1 }});
+  });
+
   Meteor.methods({
     'item.createPart': function(obj){
       obj._id = new Mongo.ObjectID();

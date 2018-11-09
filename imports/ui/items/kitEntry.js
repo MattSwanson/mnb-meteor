@@ -15,7 +15,8 @@ FlowRouter.route('/kitEntry', {
 });
 
 Template.kitEntry.onCreated(function(){
-  
+  // Get all active item revisions so we can auto fill the correct rev 
+  Meteor.subscribe('activeRevisions');
 });
 
 Template.kitEntry.events({
@@ -98,5 +99,19 @@ Template.kitEntry.events({
   },
   'click #remove-spec-inst-btn': function(){
     $(' .spec-inst-input').last().remove();
+  },
+  'blur [name="item-number"]': function(event){
+    let itemNumber = event.currentTarget.value.trim();
+    const item = Items.findOne({ number: itemNumber });
+    if(!item){
+      // Not a valid item number - invalidate the item number input
+      console.log('Invalid item number entered');
+      event.currentTarget.closest('tr').cells[2].lastChild.value = '';
+    }else{
+      // We have a matching item number - populate the rev field
+      // with it's current active revision
+      const rev = item.revision;
+      event.currentTarget.closest('tr').cells[2].lastChild.value = rev;
+    }
   }
 });
