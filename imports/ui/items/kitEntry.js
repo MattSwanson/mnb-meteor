@@ -25,6 +25,7 @@ Template.kitEntry.events({
     let contentArray = [];
     $('.line-item-row').map((i, e)=>{
       let lineItem = {
+        uom: "pc",
         qty: e.cells[0].lastChild.value,
         item: {
           number: e.cells[1].lastChild.value,
