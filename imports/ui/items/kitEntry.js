@@ -24,12 +24,17 @@ Template.kitEntry.events({
     event.preventDefault();
     let contentArray = [];
     $('.line-item-row').map((i, e)=>{
+      const itemNumber = e.cells[1].lastChild.value;
+      const revision = e.cells[2].lastChild.value;
+      const item = Items.findOne({ number: itemNumber, revision: revision });
       let lineItem = {
         uom: "pc",
         qty: e.cells[0].lastChild.value,
         item: {
-          number: e.cells[1].lastChild.value,
-          revision: e.cells[2].lastChild.value
+          number: itemNumber,
+          revision: revision,
+          simpleDescription: item.simpleDescription,
+          refId: item._id
         }
       }
       let bag = e.cells[3].lastChild.value;
