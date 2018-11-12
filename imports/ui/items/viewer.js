@@ -57,13 +57,15 @@ Template.itemViewer.helpers({
       aliases.forEach((alias) => {
         let ai = Items.findOne({_id: alias.refId});
         //  -  get its history
-        let aliasHistory = ai.history;
-        aliasHistory.forEach((shipment) => {
-          shipment.itemNumber = alias.number;
-          shipment.itemRevision = alias.revision;
-        });
-        // Combine all histories into one array
-        history = history.concat(aliasHistory);
+        if(ai){
+          let aliasHistory = ai.history;
+          aliasHistory.forEach((shipment) => {
+            shipment.itemNumber = alias.number;
+            shipment.itemRevision = alias.revision;
+          });
+          // Combine all histories into one array
+          history = history.concat(aliasHistory);
+        }
       });
       // Sort the array by shipment date and then return it to the template
       history.sort((a,b)=>{
