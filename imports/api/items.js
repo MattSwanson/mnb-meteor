@@ -49,7 +49,7 @@ if(Meteor.isServer){
 
   Meteor.publish('activeRevisions', function(){
     console.log('Publishing Active Revisions');
-    return Items.find({ isActive: true }, { fields: { _id: 1, number: 1, revision: 1, simpleDescription: 1 }});
+    return Items.find({ isActive: true }, { fields: { _id: 1, number: 1, revision: 1, simpleDescription: 1, cost: 1, salePrice: 1, part: 1 }});
   });
 
   Meteor.methods({

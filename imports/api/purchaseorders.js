@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { Items } from './items';
+import { SearchIndex } from './search';
 
 export const PurchaseOrders = new Mongo.Collection('purchaseorders');
 
@@ -92,6 +93,31 @@ if(Meteor.isServer){
       }, {
         $pull: {
           lineItems: { _id: id }
+        }
+      });
+    },
+    'purchaseOrders.create'(po){
+      // There is some information we need to get to fill in here first
+      // We need descriptions and ref ids for ta
+      po._id = new Mongo.ObjectID();
+      const result = PurchaseOrders.find({ number: po.number }).fetch();
+      if(result.length > 0){
+        throw new Meteor.Error('po-exists', 'An order with that number already exists');
+      }
+      return PurchaseOrders.insert(po, (err, res) => {
+        if(err)
+          return err;
+        else{
+          const entry = {
+            name: `${po.number}`,
+            type: "Purchase Order",
+            recordId: res
+          };
+          SearchIndex.insert(entry, (err, r) => {
+            if(err)
+              return err;
+          });
+          return res;
         }
       });
     }
