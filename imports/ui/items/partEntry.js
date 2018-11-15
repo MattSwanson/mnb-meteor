@@ -3,7 +3,7 @@ import { Mongo } from 'meteor/mongo';
 import { Template } from 'meteor/templating';
 
 import './partEntry.html';
-import { Items, Materials, Coatings, SecondaryProcesses } from '../../api/items';
+import { Items, Materials, Coatings, SecondaryProcesses, ItemMethods } from '../../api/items';
 import { EventEmitter } from 'events';
 
 FlowRouter.route('/partEntry', {
@@ -76,7 +76,7 @@ Template.partEntry.events({
         shelfNum: 1
       }
     };
-    Meteor.call('item.createPart', item, (err, res) => {
+    ItemMethods.createPart.call(item, (err, res) => {
       if(err){
         if(err.error === "item-revision-exists")
           alert('That item revision already exists');
@@ -87,6 +87,17 @@ Template.partEntry.events({
         FlowRouter.go(`/items/${res._str}`);
       }
     });
+    // Meteor.call('item.createPart', item, (err, res) => {
+    //   if(err){
+    //     if(err.error === "item-revision-exists")
+    //       alert('That item revision already exists');
+    //     else
+    //       alert(err.message);
+    //     return;
+    //   }else{
+    //     FlowRouter.go(`/items/${res._str}`);
+    //   }
+    // });
   },
   'click .new-material-btn': function(event){
     $('.new-material-dlg').modal('show');
@@ -97,14 +108,16 @@ Template.partEntry.events({
       alert("Can not enter a blank name");
       return;
     }
-    Meteor.call('item.newMaterial', { name: name }, (err, res)=>{
+    ItemMethods.addMaterial.call({
+      name: name
+     }, (err, res) => {
       if(err)
         alert(err);
       else{
         $('.new-material-dlg').modal('hide');
         $('.new-material-dlg input#new-name').val('');
       }
-    });
+    })
   },
   'click .new-coating-btn': function(event){
     $('.new-coating-dlg').modal('show');
@@ -115,14 +128,16 @@ Template.partEntry.events({
       alert("Can not enter a blank name");
       return;
     }
-    Meteor.call('item.newCoating', { name: name }, (err, res)=>{
+    ItemMethods.addCoating.call({
+      name: name
+    }, (err, res) => {
       if(err)
         alert(err);
       else{
         $('.new-coating-dlg').modal('hide');
         $('.new-coating-dlg input#new-name').val('');
       }
-    });
+    })
   },
   'click .new-process-btn': function(event){
     $('.new-process-dlg').modal('show');
@@ -133,13 +148,15 @@ Template.partEntry.events({
       alert("Can not enter a blank name");
       return;
     }
-    Meteor.call('item.newProcess', { name: name }, (err, res)=>{
+    ItemMethods.addProcess.call({
+      name: name
+    }, (err, res) => {
       if(err)
         alert(err);
       else{
         $('.new-process-dlg').modal('hide');
         $('.new-process-dlg input#new-name').val('');
       }
-    });
+    })
   }
 });

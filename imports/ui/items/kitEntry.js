@@ -4,7 +4,7 @@ import { Template } from 'meteor/templating';
 import { Blaze } from 'meteor/blaze';
 
 import './kitEntry.html';
-import { Items } from '../../api/items';
+import { Items, ItemMethods } from '../../api/items';
 import { EventEmitter } from 'events';
 
 FlowRouter.route('/kitEntry', {
@@ -65,8 +65,9 @@ Template.kitEntry.events({
     }
     let item = {
       number: event.target.number.value.trim(),
-      revision: event.target.revision.value.trim(),
+      revision: event.target.kitRevision.value.trim(),
       effectiveDate: effDate,
+      isActive: true,
       specialInstructions: specialInstructions,
       kit:{
         cartonQty: 1,
@@ -78,8 +79,7 @@ Template.kitEntry.events({
       simpleDescription: event.target.name.value.trim()
     }
     console.log(item);
-    //Meteor call add kit pass item object we just made
-    Meteor.call('item.createKit', item, (err, res) => {
+    ItemMethods.createKit.call(item, (err, res) => {
       if(err){
         if(err.error === "item-revision-exists")
           alert('That item revision already exists');
