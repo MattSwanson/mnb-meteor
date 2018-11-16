@@ -171,12 +171,14 @@ export const ItemMethods = {
 
 if(Meteor.isServer){
   Meteor.publish('singleItem', function(id){
+    check(id, String);
     const itemId = new Mongo.ObjectID(id);
     return Items.find(itemId);
   });
 
   // Need to publish the item aliases else they wont be found on client side
   Meteor.publish('itemAliases', function(id){
+    check(id, String);
     const baseId = new Mongo.ObjectID(id);
     const baseItem = Items.findOne(baseId);
     if(!baseItem.aliases)

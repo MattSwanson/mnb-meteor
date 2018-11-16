@@ -159,11 +159,13 @@ if(Meteor.isServer){
   });
 
   Meteor.publish('singlePurchaseOrder', function(id){
+    
     const oid = new Mongo.ObjectID(id);
     return PurchaseOrders.find(oid);
   });
 
   Meteor.publish('openPurchaseOrdersContainingItem', function(id){
+    check(id, String);
     oid = new Mongo.ObjectID(id);
     return PurchaseOrders.find({
       $and: [
@@ -174,6 +176,7 @@ if(Meteor.isServer){
   });
 
   Meteor.publish('openPurchaseOrdersWithItemInProcess', function(id){
+    check(id, String);
     oid = new Mongo.ObjectID(id);
     return PurchaseOrders.find({
       $and: [

@@ -47,11 +47,13 @@ if(Meteor.isServer){
   });
 
   Meteor.publish('singleSalesOrder', function(id){
+    check(id, String);
     const oid = new Mongo.ObjectID(id);
     return SalesOrders.find(oid);
   });
 
   Meteor.publish('salesOrdersContainingItems', function(id){
+    check(id, String);
     console.log('Publishing Sales Orders Containing Items');
     var kitsIn = Items.find({ _id: new Mongo.ObjectID(id) }, {_id: 0, 'usedIn.refId': 1, 'usedIn.quantityUsed': 1}).fetch();
     var kitsIds = [];
