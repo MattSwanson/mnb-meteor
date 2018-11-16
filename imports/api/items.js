@@ -39,7 +39,7 @@ const itemSchema = new SimpleSchema({
 });
 
 // This schema is used for places where references to other items are used
-const simpleItemSchema = new SimpleSchema({
+export const simpleItemSchema = new SimpleSchema({
   number: String,
   revision: String,
   simpleDescription: String,
