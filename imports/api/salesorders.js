@@ -1,8 +1,30 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
+import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { Items } from './items';
+import { SimpleSchema } from 'simpl-schema/dist/SimpleSchema';
 
 export const SalesOrders = new Mongo.Collection('salesorders');
+
+export const SalesOrderMethods = {
+  updateLineItem: new ValidatedMethod({
+    name: 'salesOrders.updateLineItem',
+    validate: new SimpleSchema({
+      lineItemId: String,
+      newStatus: String
+    }).validator(),
+    run({ lineItemId, newStatus }){
+      id = new Mongo.ObjectID(lineItemId);
+      SalesOrders.update({
+        lineItems: {
+          $elemMatch: { _id: id }
+        }
+      }, {
+          $set: { "lineItems.$.status" : newStatus }
+      });
+    }
+  })
+};
 
 if(Meteor.isServer){
   Meteor.publish('salesorders', function salesOrdersPublication(){
@@ -47,18 +69,5 @@ if(Meteor.isServer){
         }
       }
     });
-  });
-
-  Meteor.methods({
-    'salesOrders.updateLineItem'({ lineItemId, newStatus }){
-      id = new Mongo.ObjectID(lineItemId);
-      SalesOrders.update({
-        lineItems: {
-            $elemMatch: { _id: id }
-          }
-        }, {
-          $set: { "lineItems.$.status" : newStatus }
-        });
-      }
   });
 }
