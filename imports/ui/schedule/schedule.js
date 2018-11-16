@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
-import { SalesOrders } from '../../api/salesorders.js';
+import { SalesOrders, SalesOrderMethods } from '../../api/salesorders.js';
 
 import './schedule.html';
 
@@ -72,16 +72,16 @@ Template.schedule.events({
       proceed = confirm(`Are you sure you want to mark this line ${newStatus}?`);
     }
     if(proceed == true){
-      Meteor.call('salesOrders.updateLineItem', {
+      SalesOrderMethods.updateLineItem.call({
         lineItemId: event.currentTarget.parentElement.getAttribute('line-id'),
         newStatus: newStatus
-      }), (err, res) => {
+      },(err, res) => {
         if(err){
           alert(err);
         } else { 
           // success
         }
-      }
+      });
     }
   }
 });

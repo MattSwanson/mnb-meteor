@@ -23,3 +23,6 @@ kadira:flow-router
 kadira:blaze-layout
 mikowals:batch-insert
 fortawesome:fontawesome
+reactive-dict
+mdg:validated-method
+check

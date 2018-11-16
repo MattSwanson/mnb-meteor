@@ -1,0 +1,122 @@
+<template name="createPo">
+  <div class="container">
+  <h1>Create a Purchase Order</h1>
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="radio" class="form-check-input" name="order-type" id="order-type-items" value="items" checked="">
+        Items
+      </label>
+    </div>
+    <div class="form-check">
+      <label class="form-check-label">
+        <input type="radio" class="form-check-input" name="order-type" id="order-type-process" value="process">
+        Process
+      </label>
+    </div>
+    <form class="needs-validation" novalidate>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label for="vendor" class="input-group-text">Vendor</label>
+        </div>
+        <select name="vendor" class="custom-select">
+            {{#each companies }}
+              <option value="{{ _id._str }}">{{ name }}</option>
+            {{else}}
+              <option><i class="fa fa-spinner fa-spin"></i>Loading...</option>
+            {{/each}}
+          </select>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label for="poNumber" class="input-group-text">PO Number</label>
+        </div>
+        <input type="text" class="form-control" name="poNumber" required>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label for="orderDate" class="input-group-text">Order Date</label>
+        </div>
+        <input type="text" class="form-control" name="orderDate" required value="{{ todaysDate }}">
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label for="terms" class="input-group-text">Terms</label>
+        </div>
+        <input type="text" class="form-control" name="terms" required value="Net 30">
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label for="shipVia" class="input-group-text">Ship Via</label>
+        </div>
+        <input type="text" class="form-control" name="shipVia" required>
+      </div>
+      {{#if isProcessOrder }}
+        {{> poProcessTable }}
+      {{else}}
+        {{> poItemTable }}
+      {{/if}}
+      <button id="add-line-btn" class="btn btn-primary btn-sm" type="button">Add Line</button>
+      <button id="remove-line-btn" class="btn btn-danger btn-sm" type="button">Remove Line</button>
+      <br><br>
+      <button type="submit" class="btn btn-primary btn-lg">Submit PO</button>
+    </form>
+  </div>
+</template>
+
+<template name="poItemTable">
+  <table class="po-items-table">
+    <thead>
+      <tr>
+        <th>Qty</th>
+        <th>UOM</th>
+        <th>Item Number</th>
+        <th>Revision</th>
+        <th>Expected Date</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</template>
+
+<template name="poItemRow">
+  <tr class="po-line-row">
+    <td><input type="text" name="total-qty" class="form-control-plaintext"></td>
+    <td><input type="text" name="uom" class="form-control-plaintext" value="pc" tabindex="-1"></td>
+    <td><input type="text" name="number" class="form-control-plaintext"></td>
+    <td><input type="text" name="revision" class="form-control-plaintext" tabindex="-1"></td>
+    <td><input type="text" name="expected-date" class="form-control-plaintext"></td>
+  </tr>
+</template>
+
+<template name="poProcessTable">
+  <table class="po-items-table">
+    <thead>
+      <tr>
+        <th>Item Number</th>
+        <th>Revision</th>
+        <th>Num Cartons</th>
+        <th>Total Qty</th>
+        <th>UOM</th>
+        <th>Process</th>
+        <th>Expected Date</th>
+        <th>Label?</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</template>
+
+<template name="poProcessRow">
+  <tr class="po-line-row">
+    <td><input type="text" name="number" class="form-control-plaintext"></td>
+    <td><input type="text" name="revision" class="form-control-plaintext" tabindex="-1"></td>
+    <td><input type="text" name="num-cartons" class="form-control-plaintext"></td>
+    <td><input type="text" name="total-qty" class="form-control-plaintext"></td>
+    <td><input type="text" name="uom" class="form-control-plaintext" tabindex="-1" value="pc"></td>
+    <td><input type="text" name="process" class="form-control-plaintext"></td>
+    <td><input type="text" name="expected-date" class="form-control-plaintext"></td>
+    <td><input type="checkbox" value="" name="label"></td>
+  </tr>
+</template>

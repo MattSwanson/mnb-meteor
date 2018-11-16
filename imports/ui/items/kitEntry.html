@@ -1,0 +1,66 @@
+<template name="kitEntry">
+  <div class="container">
+    <h1>Kit Entry</h1>
+    <form class="needs-validation" novalidate>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label for="name" class="input-group-text">Name</label>
+        </div>
+        <input type="text" class="form-control" name="name" required>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label for="number" class="input-group-text">Number</label>
+        </div>
+        <input type="text" class="form-control" name="number" required>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label for="kitRevision" class="input-group-text">Revision</label>
+        </div>
+        <input type="text" class="form-control" name="kitRevision" required>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label for="effDate" class="input-group-text">Effective Date</label>
+        </div>
+        <input type="text" class="form-control" name="effDate" required>
+      </div>
+      <h3>Special Instructions</h3>
+      <div class="special-instrunctions-entry"></div>
+      <button type="button" class="btn btn-danger btn-sm" id="remove-spec-inst-btn">Remove Line</button>
+      <button type="button" class="btn btn-primary btn-sm" id="add-spec-inst-btn">Add Line</button>
+      <br><br>
+      <h3>Contents</h3>
+      <table class="table kit-line-items-table">
+        <thead>
+          <tr>
+            <th>Qty</th>
+            <th>Item Number</th>
+            <th>Rev</th>
+            <th>Bag Num</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+      <button type="button" class="btn btn-danger btn-sm" id="remove-line-item-btn">Remove Line</button>
+      <button type="button" class="btn btn-primary btn-sm" id="add-line-item-btn">Add Line</button>
+      <br><br>
+      <button type="submit" class="btn btn-primary btn-lg">Submit Kit</button>
+    </form>
+  </div>
+</template>
+
+<template name="kitEntryTableRow">
+  <tr class="line-item-row">
+    <td><input type="text" name="qty" class="form-control-plaintext"></td>
+    <td><input type="text" name="item-number" class="form-control-plaintext"></td>
+    <td><input type="text" name="revision" class="form-control-plaintext" tabindex="-1"></td>
+    <td><input type="text" name="bag-number" class="form-control-plaintext"></td>
+  </tr>
+</template>
+
+<template name="specialInstLine">
+  <input type="text" name="special-inst" class="form-control-plaintext spec-inst-input">
+</template>

@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { Template } from 'meteor/templating';
-import { PurchaseOrders } from '../../api/purchaseorders.js';
+import { PurchaseOrders, PurchaseOrderMethods } from '../../api/purchaseorders.js';
 
 import './viewer.html';
 
@@ -36,10 +36,10 @@ Template.poViewer.events({
       return;
     }
     const lineId = $('.rec-dialog input#line-id').val();
-    Meteor.call('purchaseOrders.receiveItem', {
+    PurchaseOrderMethods.receiveItem.call({
       lineId: lineId,
       recdQty: recdQty,
-      recdDate: recdDate
+      recdDate: d
     }, (err, res) => {
       if(err)
         alert(err);
@@ -53,7 +53,7 @@ Template.poViewer.events({
     const c = confirm(`Are you sure you want to delete this line?`);
     if(c){
       const lineId = event.currentTarget.getAttribute('line-id');
-      Meteor.call('purchaseOrders.deleteLineItem', {
+      PurchaseOrderMethods.deleteLineItem.call({
         lineId: lineId
       }, (err, res) => {
         if(err)

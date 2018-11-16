@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { Template } from 'meteor/templating';
-import { SalesOrders } from '../../api/salesorders.js';
+import { SalesOrders, SalesOrderMethods } from '../../api/salesorders.js';
 
 import './viewer.html';
 
@@ -33,14 +33,14 @@ Template.soViewer.helpers({
 
 Template.soViewer.events({
   'click .status-btn': function(event){
-    Meteor.call('salesOrders.updateLineItem', {
+    SalesOrderMethods.updateLineItem.call({
       lineItemId: event.currentTarget.parentElement.getAttribute('line-id'),
       newStatus: event.currentTarget.getAttribute('status')
-    }), (err, res) => {
+    }, (err, res) => {
       if(err)
         alert(err);
       else
         return false;
-    }
+    });
   }
 })

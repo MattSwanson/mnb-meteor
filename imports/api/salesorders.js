@@ -1,8 +1,30 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
+import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { Items } from './items';
+import { SimpleSchema } from 'simpl-schema/dist/SimpleSchema';
 
 export const SalesOrders = new Mongo.Collection('salesorders');
+
+export const SalesOrderMethods = {
+  updateLineItem: new ValidatedMethod({
+    name: 'salesOrders.updateLineItem',
+    validate: new SimpleSchema({
+      lineItemId: String,
+      newStatus: String
+    }).validator(),
+    run({ lineItemId, newStatus }){
+      id = new Mongo.ObjectID(lineItemId);
+      SalesOrders.update({
+        lineItems: {
+          $elemMatch: { _id: id }
+        }
+      }, {
+          $set: { "lineItems.$.status" : newStatus }
+      });
+    }
+  })
+};
 
 if(Meteor.isServer){
   Meteor.publish('salesorders', function salesOrdersPublication(){
@@ -25,17 +47,22 @@ if(Meteor.isServer){
   });
 
   Meteor.publish('singleSalesOrder', function(id){
+    check(id, String);
     const oid = new Mongo.ObjectID(id);
     return SalesOrders.find(oid);
   });
 
   Meteor.publish('salesOrdersContainingItems', function(id){
+    check(id, String);
     console.log('Publishing Sales Orders Containing Items');
     var kitsIn = Items.find({ _id: new Mongo.ObjectID(id) }, {_id: 0, 'usedIn.refId': 1, 'usedIn.quantityUsed': 1}).fetch();
-    kitsIds = kitsIn[0].usedIn.reduce((acc,val)=>{
-      acc.push(val.refId);
-      return acc;
-    }, []);
+    var kitsIds = [];
+    if(kitsIn[0].usedIn){
+      kitsIds = kitsIn[0].usedIn.reduce((acc,val)=>{
+        acc.push(val.refId);
+        return acc;
+      }, []);
+    }
     return SalesOrders.find({
       lineItems:{
         $elemMatch:{
@@ -44,18 +71,5 @@ if(Meteor.isServer){
         }
       }
     });
-  });
-
-  Meteor.methods({
-    'salesOrders.updateLineItem'({ lineItemId, newStatus }){
-      id = new Mongo.ObjectID(lineItemId);
-      SalesOrders.update({
-        lineItems: {
-            $elemMatch: { _id: id }
-          }
-        }, {
-          $set: { "lineItems.$.status" : newStatus }
-        });
-      }
   });
 }
