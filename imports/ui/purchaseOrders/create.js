@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { ReactiveDict } from 'meteor/reactive-dict';
-import { PurchaseOrders } from '../../api/purchaseorders.js';
+import { PurchaseOrders, PurchaseOrderMethods } from '../../api/purchaseorders.js';
 import { Companies } from '../../api/companies.js';
 import { Items } from '../../api/items.js'
 
@@ -90,11 +90,11 @@ Template.createPo.events({
       }
       po.lineItems.push(lineItem);
     });
-    console.log(po);
+    //console.log(po);
     // Validate info
     // Bottle it all into a PO object
     // Make the call to Meteor passing the PO
-    Meteor.call('purchaseOrders.create', po, (err, res) => {
+    PurchaseOrderMethods.create.call(po, (err, res) => {
       if(err){
         if(err.error === "po-exists")
           alert('An order with that PO number already exists');
