@@ -11,14 +11,19 @@ const itemLineSchema = new SimpleSchema({
   reqDate: Date,
   qty: { type: 'Number' },
   uom: String,
-  item: simpleItemSchema
+  item: {
+    type: simpleItemSchema,
+    optional: true
+  },
+  targetItem: { 
+    type: simpleItemSchema,
+    optional: true
+  },
+  process: {
+    type: 'String',
+    optional: true
+  }
 });
-
-const processLineSchema = new SimpleSchema({
-  targetItem: simpleItemSchema,
-  process: String
-});
-processLineSchema.extend(itemLineSchema);
 
 const purchaseOrderSchema = new SimpleSchema({
   number: String,
@@ -35,10 +40,7 @@ const purchaseOrderSchema = new SimpleSchema({
   },
   // Not validating lineItem objects until I can figure out how to validate
   // between two different object types using oneOf or custom validation
-  'lineItems.$': {
-    type: Object,
-    blackbox: true
-  }
+  'lineItems.$': itemLineSchema
 });
 
 

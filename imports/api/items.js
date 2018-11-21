@@ -5,10 +5,54 @@ import SimpleSchema from 'simpl-schema';
 
 import { SearchIndex } from './search';
 
-export const Items = new Mongo.Collection('items');
 export const Materials = new Mongo.Collection('materials');
 export const Coatings = new Mongo.Collection('coatings');
 export const SecondaryProcesses = new Mongo.Collection('secondaryProcesses');
+
+// This schema is used for places where references to other items are used
+export const simpleItemSchema = new SimpleSchema({
+  number: String,
+  revision: String,
+  simpleDescription: String,
+  refId: Object,
+  'refId._str': String
+});
+
+const partSchema = new SimpleSchema({
+    description: String,
+    size: String,
+    origin: String,
+    material: String,
+    coating: {
+      type: 'String',
+      optional: true
+    },
+    additionalProcess: {
+      type: 'String', 
+      optional: true
+    }
+});
+
+const kitSchema = new SimpleSchema({
+  cartonQty: Number,
+  carton: String,
+  packaging: String,
+  name: String,
+  contents: {
+      type: Array,
+      minCount: 1
+  },
+  'contents.$': Object,
+    'contents.$.bagName': String,
+    'contents.$.items': {
+      type: Array,
+      minCount: 1
+    },
+    'contents.$.items.$': Object,
+      'contents.$.items.$.uom': String,
+      'contents.$.items.$.qty': { type: 'Number' },
+      'contents.$.items.$.item': simpleItemSchema
+});
 
 // Schema for minimum information required to create an item
 const itemSchema = new SimpleSchema({
@@ -35,54 +79,25 @@ const itemSchema = new SimpleSchema({
     type: Boolean,
     optional: true,
     defaultValue: true
-  }
+  },
+  part: {
+    type: partSchema,
+    optional: true
+  },
+  kit: {
+    type: kitSchema,
+    optional: true
+  },
+  location: {
+    type: Object,
+    optional: true
+  },
+  'location.shelfId': String,
+  'location.shelfNum': Number,
 });
 
-// This schema is used for places where references to other items are used
-export const simpleItemSchema = new SimpleSchema({
-  number: String,
-  revision: String,
-  simpleDescription: String,
-  refId: Object,
-  'refId._str': String
-});
-
-const partSchema = new SimpleSchema({
-  part: Object,
-    'part.description': String,
-    'part.size': String,
-    'part.origin': String,
-    'part.material': String,
-    'part.coating': String,
-    'part.additionalProcess': String,
-  location: Object,
-    'location.shelfId': String,
-    'location.shelfNum': Number
-});
-partSchema.extend(itemSchema);
-
-const kitSchema = new SimpleSchema({
-  kit: Object,
-    'kit.cartonQty': Number,
-    'kit.carton': String,
-    'kit.packaging': String,
-    'kit.name': String,
-    'kit.contents': {
-      type: Array,
-      minCount: 1
-    },
-    'kit.contents.$': Object,
-      'kit.contents.$.bagName': String,
-      'kit.contents.$.items': {
-        type: Array,
-        minCount: 1
-      },
-      'kit.contents.$.items.$': Object,
-        'kit.contents.$.items.$.uom': String,
-        'kit.contents.$.items.$.qty': { type: 'Number' },
-        'kit.contents.$.items.$.item': simpleItemSchema
-});
-kitSchema.extend(itemSchema);
+export const Items = new Mongo.Collection('items');
+Items.attachSchema(itemSchema);
 
 export const ItemMethods = {
   addMaterial: new ValidatedMethod({
@@ -114,7 +129,7 @@ export const ItemMethods = {
   }),
   createPart: new ValidatedMethod({
     name: 'items.createPart',
-    validate: partSchema.validator(),
+    validate: itemSchema.validator(),
     run(obj){
       obj._id = new Mongo.ObjectID();
       const result = Items.find({ number: obj.number, revision: obj.revision}).fetch();
@@ -141,7 +156,7 @@ export const ItemMethods = {
   }),
   createKit: new ValidatedMethod({
     name: 'items.createKit',
-    validate: kitSchema.validator(),
+    validate: itemSchema.validator(),
     run(item){
       item._id = new Mongo.ObjectID();
       kitSchema.clean(item);
