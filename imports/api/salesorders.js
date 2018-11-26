@@ -52,17 +52,42 @@ if(Meteor.isServer){
     return SalesOrders.find(oid);
   });
 
+  //TODO We need to update this to account for item aliases 
   Meteor.publish('salesOrdersContainingItems', function(id){
     check(id, String);
     console.log('Publishing Sales Orders Containing Items');
-    var kitsIn = Items.find({ _id: new Mongo.ObjectID(id) }, {_id: 0, 'usedIn.refId': 1, 'usedIn.quantityUsed': 1}).fetch();
-    var kitsIds = [];
-    if(kitsIn[0].usedIn){
-      kitsIds = kitsIn[0].usedIn.reduce((acc,val)=>{
+
+    // Get og item
+    const itemId = new Mongo.ObjectID(id);
+    const item = Items.findOne({ _id: itemId });
+    let allIds = [itemId];
+    if(item.aliases){
+      allIds = item.aliases.reduce((acc, val) => {
         acc.push(val.refId);
         return acc;
-      }, []);
-    }
+      }, allIds);
+    };
+
+    // Check for aliases
+    const items = Items.find({ _id: { $in: allIds }}, {_id: 0, 'usedIn.refId': 1, 'usedIn.quantityUsed': 1}).fetch();
+
+    //var kitsIn = Items.find({ _id: new Mongo.ObjectID(id) }, {_id: 0, 'usedIn.refId': 1, 'usedIn.quantityUsed': 1}).fetch();
+    let kitsIds = [];
+    items.forEach((item) => {
+      if(item.usedIn){
+        kitsIds = item.usedIn.reduce((acc, val) => {
+          acc.push(val.refId);
+          return acc;
+        }, kitsIds);
+      }
+    });
+    // if(kitsIn[0].usedIn){
+    //   kitsIds = kitsIn[0].usedIn.reduce((acc,val)=>{
+    //     acc.push(val.refId);
+    //     return acc;
+    //   }, []);
+    // }
+    
     return SalesOrders.find({
       lineItems:{
         $elemMatch:{
