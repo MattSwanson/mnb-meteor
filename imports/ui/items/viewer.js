@@ -87,19 +87,48 @@ Template.itemViewer.helpers({
 
     // Get a list of all ids of kits which the item is used in
     let item = Items.findOne({ _id: itemId });
-    // If this item is not used in kits just peace out of here
-    if(!item.usedIn)
-      return [];
-    var kitIds = item.usedIn.reduce((acc, val) => {
-      acc.push(val.refId);
-      return acc;
+    let itemIds = [item._id];
+    if(item.aliases){
+      itemIds = item.aliases.reduce((acc, alias) => { 
+        acc.push(alias.refId);
+        return acc;
+      }, itemIds);
+    }
+    let allItems = Items.find({ _id: { $in: itemIds }}, { fields: { usedIn: 1 }}).fetch();
+    let kitIds = allItems.reduce((acc, item) => {
+      if(!item.usedIn) return acc;
+      const usedInIds = item.usedIn.reduce((acc, kit) => {
+        acc.push(kit.refId);
+        return acc;
+      }, []);
+      return [...acc, ...usedInIds];
+      //return (item.usedIn) ? [...acc, ...item.usedIn] : acc;
     }, []);
+    // If this item is not used in kits just peace out of here
+    if(kitIds.length <= 0)
+       return [];
+
+    // var kitIds = item.usedIn.reduce((acc, val) => {
+    //   acc.push(val.refId);
+    //   return acc;
+    // }, []);
     // Make an array of key value pairs keyed by the id of the kit and the value will be the qty of the item
     // used in the kit - for later use
-    const qtys = item.usedIn.reduce((acc, val) => {
-      acc[val.refId.toHexString()] = val.quantityUsed;
-      return acc;
-    }, []);
+
+    let qtys = [];
+    allItems.map( item => {
+      if(item.usedIn){
+        qtys = item.usedIn.reduce((acc, val) => {
+          acc[val.refId.toHexString()] = val.quantityUsed;
+          return acc;
+        }, qtys);
+      }
+    });
+    
+    // const qtys = item.usedIn.reduce((acc, val) => {
+    //   acc[val.refId.toHexString()] = val.quantityUsed;
+    //   return acc;
+    // }, []);
     // Make sure we are only getting the sales orders we want (should be all we have access to right now...)
     salesOrders = SalesOrders.find({
       lineItems: {
@@ -138,7 +167,9 @@ Template.itemViewer.helpers({
       return a.reqDate - b.reqDate;
     });
     return lines;
-  }
+  },
+
+  
 });
 
 Template.partViewer.helpers({
@@ -198,5 +229,23 @@ Template.partViewer.helpers({
       return acc;
     }, []);
     return pos;
+  },
+  getKitsUsedIn(){
+    const id = FlowRouter.getParam('id');
+    const itemId = new Mongo.ObjectID(id);
+    let item = Items.findOne({ _id: itemId });
+    let itemIds = [item._id];
+    if(item.aliases){
+      itemIds = item.aliases.reduce((acc, alias) => { 
+        acc.push(alias.refId);
+        return acc;
+      }, itemIds);
+    }
+    let allItems = Items.find({ _id: { $in: itemIds }}, { fields: { usedIn: 1 }}).fetch();
+    let usedIn = [];
+    allItems.forEach((item) => {
+      usedIn = [...usedIn, ...item.usedIn];
+    });
+    return usedIn;
   }
 });

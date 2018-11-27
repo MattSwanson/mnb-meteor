@@ -1,10 +1,31 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
-import { Items } from './items';
+import { Items, simpleItemSchema } from './items';
 import { SimpleSchema } from 'simpl-schema/dist/SimpleSchema';
+import { SearchIndex } from './search';
 
 export const SalesOrders = new Mongo.Collection('salesorders');
+
+const salesOrderSchema = new SimpleSchema({
+  custOrderNumber: String,
+  orderDate: Date,
+  customer: Object,
+    'customer.refId': Object,
+      'customer.refId._str': String,
+    'customer.name': String,
+  lineItems: {
+    type: Array,
+    minCount: 1
+  },
+  'lineItems.$': Object,
+    'lineItems.$.status': String,
+    'lineItems.$.reqDate': Date,
+    'lineItems.$.uom': String,
+    'lineItems.$.qty': { type: 'Number' },
+    'lineItems.$.labelsPrinted': Boolean,
+    'lineItems.$.item': simpleItemSchema
+});
 
 export const SalesOrderMethods = {
   updateLineItem: new ValidatedMethod({
@@ -21,6 +42,33 @@ export const SalesOrderMethods = {
         }
       }, {
           $set: { "lineItems.$.status" : newStatus }
+      });
+    }
+  }),
+  create: new ValidatedMethod({
+    name: 'salesOrders.create',
+    validate: salesOrderSchema.validator(),
+    run(so){
+      so._id = new Mongo.ObjectID();
+      const result = SalesOrders.find({ number: so.custOrderNumber, customer: so.customer.refId }).fetch();
+      if(result.length > 0){
+        throw new Meteor.Error('po-exists', 'An order with that number and customer already exists');
+      }
+      return SalesOrders.insert(so, (err, res) => {
+        if(err)
+          return err;
+        else{
+          const entry = { 
+            name: `${so.number}`,
+            type: "Sales Orders",
+            recordId: res
+          };
+          SearchIndex.insert(entry, (err, r) => {
+            if(err)
+              return err;
+          });
+          return res;
+        }
       });
     }
   })
@@ -52,17 +100,42 @@ if(Meteor.isServer){
     return SalesOrders.find(oid);
   });
 
+  //TODO We need to update this to account for item aliases 
   Meteor.publish('salesOrdersContainingItems', function(id){
     check(id, String);
     console.log('Publishing Sales Orders Containing Items');
-    var kitsIn = Items.find({ _id: new Mongo.ObjectID(id) }, {_id: 0, 'usedIn.refId': 1, 'usedIn.quantityUsed': 1}).fetch();
-    var kitsIds = [];
-    if(kitsIn[0].usedIn){
-      kitsIds = kitsIn[0].usedIn.reduce((acc,val)=>{
+
+    // Get og item
+    const itemId = new Mongo.ObjectID(id);
+    const item = Items.findOne({ _id: itemId });
+    let allIds = [itemId];
+    if(item.aliases){
+      allIds = item.aliases.reduce((acc, val) => {
         acc.push(val.refId);
         return acc;
-      }, []);
-    }
+      }, allIds);
+    };
+
+    // Check for aliases
+    const items = Items.find({ _id: { $in: allIds }}, {_id: 0, 'usedIn.refId': 1, 'usedIn.quantityUsed': 1}).fetch();
+
+    //var kitsIn = Items.find({ _id: new Mongo.ObjectID(id) }, {_id: 0, 'usedIn.refId': 1, 'usedIn.quantityUsed': 1}).fetch();
+    let kitsIds = [];
+    items.forEach((item) => {
+      if(item.usedIn){
+        kitsIds = item.usedIn.reduce((acc, val) => {
+          acc.push(val.refId);
+          return acc;
+        }, kitsIds);
+      }
+    });
+    // if(kitsIn[0].usedIn){
+    //   kitsIds = kitsIn[0].usedIn.reduce((acc,val)=>{
+    //     acc.push(val.refId);
+    //     return acc;
+    //   }, []);
+    // }
+    
     return SalesOrders.find({
       lineItems:{
         $elemMatch:{
