@@ -1,0 +1,54 @@
+<template name="createSo">
+  <div class="container">
+    <h1>Create a Sales Order</h1>
+    <div class="form-check">
+      <form class="needs-validation" novalidate>
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <label for="customer" class="input-group-text">Customer</label>
+          </div>
+          <select name="customer" class="custom-select">
+            {{# each companies }}
+              <option value="{{ _id._str }}">{{ name }}</option>
+            {{else}}
+              <option><i class="fa fa-spinner fa-spin"></i>Loading...</option>
+            {{/each}}
+          </select>
+        </div>
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <label for="poNumber" class="input-group-text">PO Number</label>
+          </div>
+          <input type="text" class="form-control" name="poNumber" required>
+        </div>
+
+        <table class="table so-items-table">
+          <thead>
+            <tr>
+              <th>Qty</th>
+              <th>Item Number</th>
+              <th>Revision</th>
+              <th>Due Dates</th>
+            </tr>
+          </thead>
+          <tbody>
+
+          </tbody>
+        </table>
+        <button type="button" class="btn btn-danger btn-sm" id="remove-line-btn">Remove Line</button>
+        <button type="button" class="btn btn-primary btn-sm" id="add-line-btn">Add Line</button>
+        <br><br>
+        <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+      </form>
+    </div>
+  </div>
+</template>
+
+<template name="soLineItemRow">
+  <tr class="so-line-row">
+    <td><input type="text" name="qty" class="form-control-plaintext"></td>
+    <td><input type="text" name="number" class="form-control-plaintext"></td>
+    <td><input type="text" name="revision" class="form-control-plaintext" tabindex="-1"></td>
+    <td><input type="text" name="due-date" class="form-control-plaintext"></td>
+  </tr>
+</template>

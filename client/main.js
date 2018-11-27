@@ -16,6 +16,7 @@ import '../imports/ui/items/needs.js';
 import '../imports/ui/items/partEntry.js';
 import '../imports/ui/items/kitEntry.js';
 import '../imports/ui/purchaseOrders/create.js';
+import '../imports/ui/salesOrders/create.js';
 
 Template.hello.onCreated(function helloOnCreated() {
   // counter starts at 0
