@@ -52,5 +52,14 @@ Template.soViewer.events({
           FlowRouter.go('/createSo');
       });
     }
-  }
+  },
+  'click .delete-line': function(event){
+    if(confirm('Are you sure you want to delete this line? This should only be done if this line was a mistake. If not, close the line instead')){
+      const lineId = event.currentTarget.getAttribute('line-id');
+      SalesOrderMethods.deleteLineItem.call({ lineId: lineId }, (err, res) => {
+        if(err)
+          alert(err);
+      });
+    }
+  },
 })

@@ -95,6 +95,24 @@ export const SalesOrderMethods = {
         }
       });
     }
+  }),
+  deleteLineItem: new ValidatedMethod({
+    name: 'salesOrders.deleteLineItem',
+    validate: new SimpleSchema({
+      lineId: String
+    }).validator(),
+    run({ lineId }){
+      const id = new Mongo.ObjectID(lineId);
+      SalesOrders.update({
+        lineItems: {
+          $elemMatch: { _id: id }
+        }
+      }, {
+        $pull: {
+          lineItems: { _id: id }
+        }
+      });
+    }
   })
 };
 
