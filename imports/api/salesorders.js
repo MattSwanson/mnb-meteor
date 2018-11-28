@@ -54,6 +54,9 @@ export const SalesOrderMethods = {
       if(result.length > 0){
         throw new Meteor.Error('po-exists', 'An order with that number and customer already exists');
       }
+      so.lineItems.forEach((line) => {
+        line._id = new Mongo.ObjectID();
+      });
       return SalesOrders.insert(so, (err, res) => {
         if(err)
           return err;
@@ -64,6 +67,27 @@ export const SalesOrderMethods = {
             recordId: res
           };
           SearchIndex.insert(entry, (err, r) => {
+            if(err)
+              return err;
+          });
+          return res;
+        }
+      });
+    }
+  }),
+  delete: new ValidatedMethod({
+    name: 'salesOrders.delete',
+    validate: new SimpleSchema({
+      id: String
+    }).validator(),
+    run({ id }){
+      id = new Mongo.ObjectID(id);
+      return SalesOrders.remove({ _id: id }, (err, res) => {
+        if(err)
+          return err;
+        else{
+          //Delete the entry from the search index
+          SearchIndex.remove({ recordId: id }, (err, res) => {
             if(err)
               return err;
           });

@@ -24,7 +24,6 @@ Template.soViewer.onRendered(function(){
 
 Template.soViewer.helpers({
   order(){
-    
     let id = FlowRouter.getParam('id');
     const oid = new Mongo.ObjectID(id);
     return SalesOrders.findOne(oid);
@@ -42,5 +41,16 @@ Template.soViewer.events({
       else
         return false;
     });
+  },
+  'click .fa-trash': function(event){
+    if(confirm('Are you sure you want to delete this order? This cannot be undone!')){
+      const id = FlowRouter.getParam('id');
+      SalesOrderMethods.delete.call({ id: id }, (err, res) => {
+        if(err)
+          alert(err);
+        else
+          FlowRouter.go('/createSo');
+      });
+    }
   }
 })
