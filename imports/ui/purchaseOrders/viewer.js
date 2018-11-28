@@ -60,6 +60,20 @@ Template.poViewer.events({
           alert(err);
       });
     }
+  },
+  'click .delete-po':function(event){
+    if(confirm('Are you sure you want to delete this PO? This cannot be undone!')){
+      // Call method to delete the line based on id
+      const id = FlowRouter.getParam('id');
+      PurchaseOrderMethods.delete.call({
+        id: id
+      }, (err, res) => {
+        if(err)
+          alert(err);
+        else
+          FlowRouter.go('/createPo');
+      });
+    }
   }
 });
 

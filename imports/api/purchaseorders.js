@@ -67,7 +67,7 @@ export const PurchaseOrderMethods = {
       const orderLine = po.lineItems.find((e) => {
         return e._id._str == lineId;
       });
-      const newQty = orderLine.recQty + Number(recdQty);
+      const newQty = orderLine.recQty + recdQty;
       PurchaseOrders.update({
         lineItems: {
           $elemMatch: { _id: id }
@@ -118,8 +118,12 @@ export const PurchaseOrderMethods = {
     run(po){
       // There is some information we need to get to fill in here first
       // We need descriptions and ref ids for ta
-      console.log(purchaseOrderSchema);
       po._id = new Mongo.ObjectID();
+      // Inject ids into line items for later use
+      po.lineItems.forEach((line) => {
+        line._id = new Mongo.ObjectID();
+        line.recQty = 0;
+      });
       const result = PurchaseOrders.find({ number: po.number }).fetch();
       if(result.length > 0){
         throw new Meteor.Error('po-exists', 'An order with that number already exists');
@@ -134,6 +138,26 @@ export const PurchaseOrderMethods = {
             recordId: res
           };
           SearchIndex.insert(entry, (err, r) => {
+            if(err)
+              return err;
+          });
+          return res;
+        }
+      });
+    }
+  }),
+  delete: new ValidatedMethod({
+    name: 'purchaseOrders.delete',
+    validate: new SimpleSchema({
+      id: String
+    }).validator(),
+    run({ id }){
+      id = new Mongo.ObjectID(id);
+      PurchaseOrders.remove({ _id: id }, (err, res) => {
+        if(err)
+          return err;
+        else{
+          SearchIndex.remove({ recordId: id }, (err, res) => {
             if(err)
               return err;
           });

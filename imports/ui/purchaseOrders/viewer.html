@@ -1,7 +1,7 @@
 <template name="poViewer">
     <div class="container">
       {{#if order }}
-      <h1>PO {{ order.number }}</h1>
+      <h1>PO {{ order.number }} - <i class="fa fa-trash delete-po" aria-hidden="true"></i></h1>
       <h2>{{ order.vendor.name }}</h2>
       <h2>Order Date: 
         {{#if order.orderDate }}
