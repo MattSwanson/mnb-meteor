@@ -1,7 +1,7 @@
 <template name="soViewer">
   <div class="container">
     {{#if order }}
-    <h1>PO {{ order.custOrderNumber }} - <i class="fa fa-trash" aria-hidden="true"></i></h1>
+    <h1>PO {{ order.custOrderNumber }} - <i class="fa fa-trash delete-so" aria-hidden="true"></i></h1>
     <h2>{{ order.customer.name }}</h2>
     <h2>Order Date: 
       {{#if order.orderDate }}

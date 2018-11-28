@@ -42,7 +42,7 @@ Template.soViewer.events({
         return false;
     });
   },
-  'click .fa-trash': function(event){
+  'click .delete-so': function(event){
     if(confirm('Are you sure you want to delete this order? This cannot be undone!')){
       const id = FlowRouter.getParam('id');
       SalesOrderMethods.delete.call({ id: id }, (err, res) => {
