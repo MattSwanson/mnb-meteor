@@ -113,6 +113,49 @@ export const SalesOrderMethods = {
         }
       });
     }
+  }),
+  addLineItem: new ValidatedMethod({
+    name: 'salesOrders.addLineItem',
+    validate: new SimpleSchema({
+      orderId: String,
+      lineItem: Object,
+      'lineItem.number': String,
+      'lineItem.revision': String,
+      'lineItem.reqDate': Date,
+      'lineItem.qty': {
+        type: 'Number'
+      }
+    }).validator(),
+    run({ orderId, lineItem }){
+      const orderObjectId = new Mongo.ObjectID(orderId);
+      const item = Items.findOne({ number: lineItem.number, revision: lineItem.revision });
+      let newLine = {
+        status: "Open",
+        reqDate: lineItem.reqDate,
+        uom: "pcs",
+        qty: lineItem.qty,
+        _id: new Mongo.ObjectID(),
+        labelsPrinted: false,
+        item: {
+          simpleDescription: item.simpleDescription,
+          revision: item.revision,
+          number: item.number,
+          refId: item._id
+        }
+      };
+      return SalesOrders.update({
+        _id: orderObjectId
+      }, {
+        $push: {
+          lineItems: newLine
+        }
+      }, {}, (err, res) => {
+        if(err)
+          return err;
+        else
+          return res;
+      });
+    }
   })
 };
 

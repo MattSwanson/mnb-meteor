@@ -2,14 +2,16 @@ import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { Template } from 'meteor/templating';
 import { SalesOrders, SalesOrderMethods } from '../../api/salesorders.js';
+import { Items } from '../../api/items.js';
 
 import './viewer.html';
+import { O_DIRECT } from 'constants';
 
 Template.soViewer.onCreated(function(){
   console.log("So Viewer onCreate");
   // let id = FlowRouter.getParam('id');
   // Meteor.subscribe('singleSalesOrder', id);
-
+  Meteor.subscribe('activeRevisions');
   this.autorun(function(){
     FlowRouter.watchPathChange();
     console.log('Path has changed in sales over viewer');
@@ -61,5 +63,39 @@ Template.soViewer.events({
           alert(err);
       });
     }
+  },
+  'click #add-line-btn': function(event){
+    // Pop our form into the last row of the table.
+    $('.add-line-dialog').modal('show');
+  },
+  'blur [name="number"]': function(event){
+    let itemNumber = event.currentTarget.value.trim();
+    const item = Items.findOne({ number: itemNumber });
+    if(!item)
+      $(event.currentTarget).closest('div').find('input[name=revision]').val('');
+   else
+   {
+      const rev = item.revision;
+      $(event.currentTarget).closest('div').find('input[name=revision]').val(rev);
+   }
+  },
+  'submit form': function(event){
+    event.preventDefault();
+    const id = FlowRouter.getParam('id');
+    const lineItem = {
+      number: event.currentTarget.number.value.trim(),
+      revision: event.currentTarget.revision.value.trim(),
+      reqDate: new Date(event.currentTarget.dueDate.value.trim()),
+      qty: event.currentTarget.qty.value.trim()
+    };
+    SalesOrderMethods.addLineItem.call({
+      orderId: id,
+      lineItem: lineItem
+    }, (err, res) => {
+      if(err)
+        alert(err);
+      else
+        $('.add-line-dialog').modal('hide');
+    });
   },
 })
