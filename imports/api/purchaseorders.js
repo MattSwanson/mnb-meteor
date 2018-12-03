@@ -165,6 +165,59 @@ export const PurchaseOrderMethods = {
         }
       });
     }
+  }),
+  addLineItem: new ValidatedMethod({
+    name: 'purchaseOrders.addLineItem',
+    validate: new SimpleSchema({
+      orderId: String,
+      line: Object,
+      'line.qty': {
+        type: 'Number'
+      },
+      'line.number': String,
+      'line.revision': String,
+      'line.reqDate': Date,
+      'line.process': {
+        type: String,
+        optional: true
+      }
+    }).validator(),
+    run({ orderId, line }){
+      const orderObjId = new Mongo.ObjectID(orderId);
+      const item = Items.findOne({ number: line.number, revision: line.revision });
+      let newLine = {
+        _id: new Mongo.ObjectID(),
+        recQty: 0,
+        reqDate: line.reqDate,
+        qty: line.qty,
+        complete: false,
+        uom: 'pcs'
+      };
+      const itemObj = {
+        simpleDescription: item.simpleDescription,
+        revision: item.revision,
+        number: item.number,
+        refId: item._id
+      }
+      if(line.process){
+        newLine.targetItem = itemObj;
+        newLine.process = line.process;
+      }else{
+        newLine.item = itemObj;
+      }
+      return PurchaseOrders.update({
+        _id: orderObjId
+      }, {
+        $push: {
+          lineItems: newLine
+        }
+      }, {}, (err, res) => {
+        if(err)
+          return err;
+        else
+          return res;
+      });
+    }
   })
 }
 

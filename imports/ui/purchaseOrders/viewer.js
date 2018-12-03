@@ -1,6 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { Template } from 'meteor/templating';
+import { ReactiveDict } from 'meteor/reactive-dict';
+import { Items } from '../../api/items.js';
 import { PurchaseOrders, PurchaseOrderMethods } from '../../api/purchaseorders.js';
 
 import './viewer.html';
@@ -20,6 +22,12 @@ Template.poViewer.events({
   'click .rec-btn': function(event, template){
     $('.rec-dialog input#line-id').val(event.currentTarget.getAttribute('line-id'));
     $('.rec-dialog').modal('show');
+  },
+  'click #add-line-btn': function(event){
+    $('.add-line-dialog').modal('show');
+  },
+  'change [name="line-type"]'(event, instance){
+    instance.state.set('lineType', event.target.id);
   },
   'click .save-btn': function(event, template){
     // Get the qty and date from the forms and send them
@@ -74,10 +82,55 @@ Template.poViewer.events({
           FlowRouter.go('/createPo');
       });
     }
+  },
+  'blur [name="number"]': function(event){
+    let itemNumber = event.currentTarget.value.trim();
+    const item = Items.findOne({ number: itemNumber });
+    if(!item){
+      console.log('Invalid item number entered');
+      $(event.currentTarget).closest('div').find('input[name=revision]').val('');
+    }else{
+      const rev = item.revision;
+      $(event.currentTarget).closest('div').find('input[name=revision]').val(rev);
+    }
+  },
+  'submit form': function(event, instance){
+    event.preventDefault();
+    console.log("Submitting add line form");
+    const poId = FlowRouter.getParam('id');
+    // Gather data from form into object
+    let reqDate = new Date(event.target.reqDate.value.trim());
+    if(isNaN(reqDate.getMilliseconds())){ //Invalid Date
+      alert("Date is not valid");
+      return;
+    }
+    let lineItem = {
+      qty: event.target.qty.value.trim(),
+      number: event.target.number.value.trim(),
+      revision: event.target.revision.value.trim(),
+      reqDate: reqDate
+    };
+    if(Template.instance().state.get('lineType') == 'line-type-process'){
+      lineItem.process = event.target.process.value.trim()
+    }
+    
+    PurchaseOrderMethods.addLineItem.call({
+      orderId: poId,
+      line: lineItem
+    }, (err, res) => {
+      if(err)
+        alert(err);
+      else{
+        $('.add-line-dialog').modal('hide');
+      }
+    })
   }
 });
 
 Template.poViewer.onCreated(function(){
+  this.state = new ReactiveDict();
+  this.state.set('lineType', 'line-type-item');
+  Meteor.subscribe('activeRevisions');
   this.autorun(function(){
     FlowRouter.watchPathChange();
     let id = FlowRouter.getParam('id');
@@ -90,5 +143,9 @@ Template.poViewer.helpers({
     let id = FlowRouter.getParam('id');
     const oid = new Mongo.ObjectID(id);
     return PurchaseOrders.findOne(oid);
+  },
+  isProcessLine(){
+    const instance = Template.instance();
+    return instance.state.get('lineType') == 'line-type-process';
   }
 });

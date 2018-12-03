@@ -1,62 +1,109 @@
 <template name="poViewer">
+  <div class="container">
+    {{#if order }}
+    <h1>PO {{ order.number }} - <i class="fa fa-trash delete-po" aria-hidden="true"></i></h1>
+    <h2>{{ order.vendor.name }}</h2>
+    <h2>Order Date: 
+      {{#if order.orderDate }}
+        {{ subDate order.orderDate }}
+      {{/if}}
+    </h2>
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>Qty</th>
+          <th>Item</th>
+          <th>Desc</th>
+          <th>Due Date</th>
+          <th>Recd Qty</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each order.lineItems }}
+          {{#if process }}
+            {{> procOrderLine }}
+          {{else}}
+            {{> purchOrderLine }}
+          {{/if}}
+        {{/each}}
+      </tbody>
+    </table>
     <div class="container">
-      {{#if order }}
-      <h1>PO {{ order.number }} - <i class="fa fa-trash delete-po" aria-hidden="true"></i></h1>
-      <h2>{{ order.vendor.name }}</h2>
-      <h2>Order Date: 
-        {{#if order.orderDate }}
-          {{ subDate order.orderDate }}
-        {{/if}}
-      </h2>
-      <table class="table table-striped table-hover">
-        <thead>
-          <tr>
-            <th>Qty</th>
-            <th>Item</th>
-            <th>Desc</th>
-            <th>Due Date</th>
-            <th>Recd Qty</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {{#each order.lineItems }}
-            {{#if process }}
-              {{> procOrderLine }}
-            {{else}}
-              {{> purchOrderLine }}
-            {{/if}}
-          {{/each}}
-        </tbody>
-      </table>
-    {{else}}
-      <h1>Loading Order...</h1>
-    {{/if}}
+        <button type="button" class="btn btn-primary btn-sm" id="add-line-btn"><i class="fa fa-plus"></i> Add Line</button>
     </div>
-    <div class="modal rec-dialog">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Receive Items</h5>
-            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
+  {{else}}
+    <h1>Loading Order...</h1>
+  {{/if}}
+  </div>
+  <div class="modal rec-dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Receive Items</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group rec-dialog-form">
+              <input type="text" class="form-control" placeholder="Received Qty" id="recd-qty">
+              <input type="text" class="form-control" placeholder="Received Date" value="{{ todaysDate }}" id="recd-date">
           </div>
-          <div class="modal-body">
-            <div class="form-group rec-dialog-form">
-                <input type="text" class="form-control" placeholder="Received Qty" id="recd-qty">
-                <input type="text" class="form-control" placeholder="Received Date" value="{{ todaysDate }}" id="recd-date">
-            </div>
-            <input type="hidden" id="line-id">
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-primary save-btn" type="button">Save Changes</button>
-            <button class="btn btn-secondary cancel-btn" type="button" data-dismiss="modal">Cancel</button>
-          </div>
+          <input type="hidden" id="line-id">
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary save-btn" type="button">Save Changes</button>
+          <button class="btn btn-secondary cancel-btn" type="button" data-dismiss="modal">Cancel</button>
         </div>
       </div>
     </div>
-  </template>
+  </div>
+  <div class="modal add-line-dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Line</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="needs-validation add-line-form" novalidate>
+
+          <div class="modal-body">
+            <div class="form-check">
+              <label class="form-check-label">
+                <input type="radio" class="form-check-input" name="line-type" id="line-type-item" value="item" checked="">
+                Item
+              </label>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input type="radio" class="form-check-input" name="line-type" id="line-type-process" value="process">
+                Process
+              </label>
+            </div>
+          </div>
+          <div class="modal-body add-line-body">
+            <input type="text" class="form-control" placeholder="Qty" name="qty">
+            <input type="text" class="form-control" placeholder="Item Number" name="number">
+            <input type="text" class="form-control" placeholder="Revision" name="revision" tabindex="-1">
+            <input type="text" class="form-control" placeholder="Required Date" value="{{ todaysDate }}" name="reqDate">
+            {{#if isProcessLine }}
+              <input type="text" class="form-control" placeholder="Process Name" name="process">
+            {{/if}}
+          </div>
+
+
+          <div class="modal-footer">
+            <button class="btn btn-primary" type="submit">Submit</button>
+            <button class="btn btn-secondary cancel-btn" type="button" data-dismiss="modal">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</template>
 
   <template name="purchOrderLine">
     <tr>
