@@ -1,6 +1,6 @@
 <template name="itemNeeds">
   <div class="container">
-    <h1>Parts needed to Order</h1>
+    <h1>Parts needed to Order <button type="button" class="btn btn-primary add-need-line"><i class="fa fa-plus" aria-hidden="true"></i> Add Item</button> </h1> 
     {{#if needs}}
       <table class="table table-hover">
         <thead></thead>
@@ -24,7 +24,34 @@
         </tbody>
       </table>
     {{else}}
-      <h1>Loading Needs List</h1>
+      <h1><i class="fa fa-circle-o-notch fa-spin fa-fw"></i> Loading Needs List </h1>
     {{/if}}
+  </div>
+  <div class="modal add-dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Item</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form class="needs-validation" novalidate>
+          <div class="modal-body">
+            <div class="form-group rec-dialog-form">
+                <input type="text" class="form-control" placeholder="Item Number" name="number">
+                <input type="text" class="form-control" placeholder="Revision" name="revision" tabindex="-1">
+                <input type="text" class="form-control" placeholder="Qty" name="qty">
+                <input type="text" class="form-control" placeholder="Req Date" value="{{ todaysDate }}" id="reqDate">
+            </div>
+            <input type="hidden" id="line-id">
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary save-btn" type="submit">Submit</button>
+            <button class="btn btn-secondary cancel-btn" type="button" data-dismiss="modal">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>

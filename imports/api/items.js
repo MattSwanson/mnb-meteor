@@ -97,7 +97,7 @@ const itemSchema = new SimpleSchema({
 });
 
 export const Items = new Mongo.Collection('items');
-Items.attachSchema(itemSchema);
+//Items.attachSchema(itemSchema);
 
 export const ItemMethods = {
   addMaterial: new ValidatedMethod({
@@ -179,6 +179,38 @@ export const ItemMethods = {
           });
           return res;
         }
+      });
+    }
+  }),
+  addNeedLine: new ValidatedMethod({
+    name: 'items.addNeedLine',
+    validate: new SimpleSchema({
+      number: String,
+      revision: String,
+      qty: { type: 'Number' },
+      reqDate: Date
+    }).validator(),
+    run({
+      number, revision, qty, reqDate
+    }){
+      const timestamp = new Date();
+      let entry = {
+        _id: new Mongo.ObjectID(),
+        status: "Open",
+        needDate: reqDate,
+        quantity: qty,
+        lastModified: timestamp,
+        createdAt: timestamp
+      };
+      return Items.update({ number: number, revision: revision }, {
+        $push: {
+          needs: entry
+        }
+      }, {}, (err, res) => {
+        if(err)
+          return err;
+        else
+          return err;
       });
     }
   })
