@@ -13,6 +13,7 @@ Template.registerHelper('todaysDate', () => {
 
 FlowRouter.route('/purchaseOrders/:id', {
   name: 'salesOrder',
+  triggersEnter: [AccountsTemplates.ensureSignedIn],
   action(){
     BlazeLayout.render('poViewer');
   }

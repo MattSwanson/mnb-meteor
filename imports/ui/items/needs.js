@@ -9,6 +9,7 @@ var ItemNeeds = new Mongo.Collection('itemNeeds');
 
 FlowRouter.route('/itemNeeds', {
   name: 'itemNeeds',
+  triggersEnter: [AccountsTemplates.ensureSignedIn],
   action(){
     BlazeLayout.render('itemNeeds');
   }

@@ -7,6 +7,7 @@ import { SalesOrderMethods } from '../../api/salesorders.js';
 
 FlowRouter.route('/createSo', {
   name: 'createSo',
+  triggersEnter: [AccountsTemplates.ensureSignedIn],
   action(){
     BlazeLayout.render('createSo');
   }
