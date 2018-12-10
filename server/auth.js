@@ -8,7 +8,8 @@ Accounts.validateNewUser((user) => {
     'emails.$.address': { type: String },
     'emails.$.verified': { type: Boolean },
     createdAt: { type: Date },
-    services: { type: Object, blackbox: true }
+    services: { type: Object, blackbox: true },
+    profile: { type: Object, blackbox: true }
   }).validate(user);
 
   return true;

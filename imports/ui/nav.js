@@ -58,6 +58,7 @@ Template.nav.helpers({
   },
   userName(){
     //TODO actaully get the users name here...
-    return 'Matt';
+    const user = Meteor.users.findOne({ _id: Meteor.userId()});
+    return user.profile.fname;
   }
 });

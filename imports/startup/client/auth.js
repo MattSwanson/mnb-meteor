@@ -9,6 +9,18 @@ AccountsTemplates.configure({
   showForgotPasswordLink: true
 });
 
+AccountsTemplates.addFields([{
+  _id: 'fname',
+  type: 'text',
+  displayName: 'First Name',
+  required: true
+},{
+  _id: 'lname',
+  type: 'text',
+  displayName: 'Last Name',
+  required: true
+}]);
+
 AccountsTemplates.configureRoute('signIn', {
   name: 'signin',
   path: '/signin'
