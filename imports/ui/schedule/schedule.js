@@ -5,7 +5,11 @@ import { SalesOrders, SalesOrderMethods } from '../../api/salesorders.js';
 import './schedule.html';
 
 Template.registerHelper('subDate', (isoDate) => {
-  return isoDate.toISOString().substring(0,10);
+  return moment(isoDate).format('YYYY-MM-DD');
+});
+
+Template.registerHelper('subDateTime', (isoDate) => {
+  return moment(isoDate).format('MMM Do YYYY, h:mm:ss a');
 });
 
 Template.registerHelper('rowClass', (status) => {

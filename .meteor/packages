@@ -30,3 +30,4 @@ aldeed:collection2
 useraccounts:bootstrap
 accounts-password
 useraccounts:flow-routing
+momentjs:moment
