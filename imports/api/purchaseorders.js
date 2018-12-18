@@ -1,7 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
-import { Items, simpleItemSchema } from './items';
+import { Items } from './items';
+import { simpleItemSchema } from './schema/items.js';
 import { SearchIndex } from './search';
 import { SimpleSchema } from 'simpl-schema/dist/SimpleSchema';
 

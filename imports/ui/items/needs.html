@@ -4,24 +4,62 @@
     {{#if needs}}
       <table class="table table-hover">
         <thead></thead>
-        <tbody>
-            {{#each needs}}
-            <tr>
-              <td><a href="/items/{{ itemId._str }}">{{ number }}</a></td>
-              <td>{{ revision }}</td>
+        {{#each needs}}
+          <tbody>
+            <tr line-id="{{ _id._str }}" class="table-primary">
+              <td><a href="/items/{{ itemId._str }}">{{ number }} - {{ revision }}</a></td>
               <td>{{ quantity }}</td>
               <td>{{ subDate needDate }}</td>
-              <td>{{ lastModified }}</td>
+              <td>
+                  <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ status }}</button>
+                  <div class="dropdown-menu" line-id="{{ _id._str }}">
+                      <button class="dropdown-item status-btn" type="button" status="Open">Open</button>
+                      <button class="dropdown-item status-btn" type="button" status="On Order">On Order</button>
+                      <button class="dropdown-item status-btn" type="button" status="Needs Processing">Needs Processing</button>
+                      <button class="dropdown-item status-btn" type="button" status="In Process">In Process</button>
+                      <button class="dropdown-item status-btn" type="button" status="Ready">Ready</button>
+                  </div>
+                </td>
+              <td>{{ subDateTime lastModified }}</td>
               <td>{{ addedBy }}</td>
+              <td><i class="fa fa-lg fa-times-circle delete" id="deleteNeedLine"></i> <i class="fa fa-lg fa-sticky-note add-note"></i> <i class="fa fa-lg fa-inbox link-po"></i></td>
             </tr>
-            {{#each notes}}
-              <tr class="table-primary">
-                <td colspan="5">{{ note }}</td>
-                <td>{{ createdBy }}</td>
+            {{#each note in notes}}
+              <tr>
+                <td></td>
+                <td colspan="3">{{ note.note }}</td>
+                <td>
+                  {{# if note.createdAt }}
+                    {{ subDateTime note.createdAt }}
+                  {{/if}}
+                </td>
+                <td>{{ note.createdBy }}</td>
+                <td><i class="fa fa-times-circle delete" id="deleteNote" note-id="{{ _id._str }}"></i></td>
               </tr>
             {{/each}}
-          {{/each}}
-        </tbody>
+            {{#each po in relatedPurchaseOrders }}
+              <tr class="linked-po-row" parent-id="{{ _id._str }}">
+                <td></td>
+                <td><a href="/purchaseOrders/{{ po.refId._str }}">{{ po.number }}</a></td>
+                <td>{{#if po.orderDate }}{{ subDate po.orderDate }}{{/if}}</td>
+                <td>{{ po.company }}</td>
+                <td colspan="2"></td>
+                <td><i class="fa fa-times-circle delete" id="unlinkPo" link-id="{{ po._id._str }}"></i></td>
+              </tr>
+            {{else}}
+              <tr class="linked-po-row" parent-id="{{ _id._str }}">
+                <td></td>
+                <td colspan="6">No linked pos exist for this line</td>
+              </tr>
+            {{/each}}
+            <tr class="linked-po-row" parent-id="{{ _id._str }}">
+              <td colspan="3"></td>
+              <td><button type="button" class="btn btn-sm btn-primary link-po">Link PO</button></td>
+              <td colspan="3"></td>
+            </tr>
+            
+          </tbody>
+        {{/each}}
       </table>
     {{else}}
       <h1><i class="fa fa-circle-o-notch fa-spin fa-fw"></i> Loading Needs List </h1>
@@ -36,7 +74,7 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <form class="needs-validation" novalidate>
+        <form class="needs-validation add-line-form" novalidate>
           <div class="modal-body">
             <div class="form-group rec-dialog-form">
                 <input type="text" class="form-control" placeholder="Item Number" name="number">
@@ -54,4 +92,67 @@
       </div>
     </div>
   </div>
+
+
+  <div class="modal add-note-dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Note</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form class="needs-validation add-note-form" novalidate>
+          <div class="modal-body">
+            <div class="form-group rec-dialog-form">
+                <input type="text" class="form-control" placeholder="Note" name="note">
+            </div>
+            <input type="hidden" id="line-id">
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary save-btn" type="submit">Submit</button>
+            <button class="btn btn-secondary cancel-btn" type="button" data-dismiss="modal">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal link-po-dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Link a PO</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form class="needs-validation link-po-form" novalidate>
+          <div class="modal-body">
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="PO Number" name="poNumber">
+            </div>
+            <input type="hidden" id="line-id">
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary save-btn" type="submit">Link</button>
+            <button class="btn btn-secondary cancel-btn" type="button" data-dismiss="modal">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+</template>
+
+<template name="statusSelect">
+  <select name="status">
+    <option value="Open" {{isSelected}} >Open</option>
+    <option value="On Order" {{isSelected}} >On Order</option>
+    <option value="Needs Processing">Needs Processing</option>
+    <option value="In Process">In Process</option>
+    <option value="Ready">Ready</option>
+  </select>
 </template>
