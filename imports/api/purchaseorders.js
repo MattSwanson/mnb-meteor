@@ -161,6 +161,23 @@ export const PurchaseOrderMethods = {
           SearchIndex.remove({ recordId: id }, (err, res) => {
             if(err)
               return err;
+            else{
+              // Also remove any need links to this po from need lines : /
+              Items.update({
+                'needs.relatedPurchaseOrders': {
+                  $elemMatch: { refId: id }
+                }
+              },{
+                $pull: {
+                  'needs.$.relatedPurchaseOrders': { refId: id }
+                }
+              }, (err, res) => {
+                if(err)
+                  return err;
+                else
+                  return res;
+              })
+            }
           });
           return res;
         }
