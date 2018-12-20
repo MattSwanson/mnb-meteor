@@ -5,6 +5,7 @@ import { ReactiveDict } from 'meteor/reactive-dict';
 import { Items } from '../../api/items.js';
 import { PurchaseOrders, PurchaseOrderMethods } from '../../api/purchaseorders.js';
 
+import '../items/templates/itemNeedsTable';
 import './viewer.html';
 
 Template.registerHelper('todaysDate', () => {
@@ -148,5 +149,34 @@ Template.poViewer.helpers({
   isProcessLine(){
     const instance = Template.instance();
     return instance.state.get('lineType') == 'line-type-process';
+  },
+  linkedNeedLines(){
+    let id = FlowRouter.getParam('id');
+    const oid = new Mongo.ObjectID(id);
+    let items = Items.find({
+      'needs.relatedPurchaseOrders': {
+        $elemMatch: {
+          refId: oid
+        }
+      }
+    }).fetch();
+
+    let needLines = [];
+    items.forEach((item) => {
+      // Step through each item and grab only the need lines that are linked to this po
+      // some items could have multiple need lines so don't get ones that AREN'T LINKED TO THIS PO!
+      needLines = item.needs.reduce((acc,line) => {
+        let hasPo = line.relatedPurchaseOrders.find((e) => {
+          return e.refId._str == id;
+        });
+        if(hasPo){
+          line.number = item.number;
+          line.revision = item.revision;
+          needLines.push(line);
+        }
+        return needLines;
+      }, needLines);
+    });
+    return needLines;
   }
 });

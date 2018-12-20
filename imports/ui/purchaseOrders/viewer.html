@@ -29,9 +29,16 @@
         {{/each}}
       </tbody>
     </table>
-    <div class="container">
-        <button type="button" class="btn btn-primary btn-sm" id="add-line-btn"><i class="fa fa-plus"></i> Add Line</button>
-    </div>
+    
+    <button type="button" class="btn btn-primary btn-sm" id="add-line-btn"><i class="fa fa-plus"></i> Add Line</button>
+    <br/>
+
+    {{#if linkedNeedLines}}
+      <div>
+        <h3>Need Lines Linked to this PO</h3>
+        {{> itemNeedsTable needs=linkedNeedLines }}
+      </div>
+    {{/if}}
   {{else}}
     <h1>Loading Order...</h1>
   {{/if}}
