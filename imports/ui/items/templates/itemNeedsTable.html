@@ -28,7 +28,7 @@
           {{/if}}
         </td>
         <td>{{ note.createdBy }}</td>
-        <td><i class="fa fa-times-circle delete" id="deleteNote" note-id="{{ _id._str }}"></i></td>
+        <td><i class="fa fa-times-circle delete" id="deleteNote" note-id="{{ note._id._str }}"></i></td>
       </tr>
     {{/each}}
     {{#each po in relatedPurchaseOrders }}
