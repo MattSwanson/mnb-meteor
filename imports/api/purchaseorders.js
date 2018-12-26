@@ -171,7 +171,8 @@ export const PurchaseOrderMethods = {
                 $pull: {
                   'needs.$.relatedPurchaseOrders': { refId: id }
                 }
-              }, (err, res) => {
+              }, { multi: true }, 
+              (err, res) => {
                 if(err)
                   return err;
                 else
