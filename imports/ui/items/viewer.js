@@ -11,6 +11,7 @@ import { PurchaseOrders } from '../../api/purchaseorders';
 
 FlowRouter.route('/items/:id', {
   name: 'item',
+  triggersEnter: [AccountsTemplates.ensureSignedIn],
   action(){
     BlazeLayout.render('itemViewer');
   }

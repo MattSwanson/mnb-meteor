@@ -7,67 +7,80 @@
   </button>
   <div class="navbar-collapse collapse" id="navbarColor01">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item dropdown show">
-        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Parts</a>
-        <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 36px, 0px);">
-          <a href="/partEntry/" class="dropdown-item">Add</a>
-          <a href="/itemNeeds/" class="dropdown-item">Needs</a>
-          <a href="#" class="dropdown-item">Needs Proc</a>
-          <a href="#" class="dropdown-item">View All</a>
-        </div>
-      </li>
-      <li class="nav-item dropdown show">
-        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Kits</a>
-        <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 36px, 0px);">
-          <a href="/kitEntry/" class="dropdown-item">Add</a>
-          <a href="#" class="dropdown-item">View All</a>
-        </div>
-      </li>
-      <li class="nav-item dropdown show">
-          <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Orders</a>
+      {{# if isLoggedIn }}
+        <li class="nav-item dropdown show">
+          <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Parts</a>
           <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 36px, 0px);">
-            <a href="/createSo/" class="dropdown-item">Add</a>
-            <a href="/salesOrders/" class="dropdown-item">View All</a>
+            <a href="/partEntry/" class="dropdown-item">Add</a>
+            <a href="/itemNeeds/" class="dropdown-item">Needs</a>
+            <a href="#" class="dropdown-item">Needs Proc</a>
+            <a href="#" class="dropdown-item">View All</a>
           </div>
-      </li>
-      <li class="nav-item"><a href="/schedule" class="nav-link">Schedule</a></li>
-      <li class="nav-item dropdown show">
-          <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Tools</a>
+        </li>
+        <li class="nav-item dropdown show">
+          <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Kits</a>
           <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 36px, 0px);">
-            <a href="#" class="dropdown-item">File Search</a>
-            <a href="#" class="dropdown-item">Plating Calc</a>
-            <a href="#" class="dropdown-item">Quote Queue</a>
+            <a href="/kitEntry/" class="dropdown-item">Add</a>
+            <a href="#" class="dropdown-item">View All</a>
           </div>
-      </li>
-      <li class="nav-item dropdown show">
-          <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Process</a>
+        </li>
+        <li class="nav-item dropdown show">
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Orders</a>
+            <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 36px, 0px);">
+              <a href="/createSo/" class="dropdown-item">Add</a>
+              <a href="/salesOrders/" class="dropdown-item">View All</a>
+            </div>
+        </li>
+        <li class="nav-item"><a href="/schedule" class="nav-link">Schedule</a></li>
+        <!-- <li class="nav-item dropdown show">
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Tools</a>
+            <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 36px, 0px);">
+              <a href="#" class="dropdown-item">File Search</a>
+              <a href="#" class="dropdown-item">Plating Calc</a>
+              <a href="#" class="dropdown-item">Quote Queue</a>
+            </div>
+        </li>
+        <li class="nav-item dropdown show">
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Process</a>
+            <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 36px, 0px);">
+              <a href="#" class="dropdown-item">Create Order</a>
+              <a href="#" class="dropdown-item">View Orders</a>
+              <a href="#" class="dropdown-item">Create Rules</a>
+            </div>
+        </li>
+        <li class="nav-item dropdown show">
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Shipments</a>
+            <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 36px, 0px);">
+              <a href="#" class="dropdown-item">Add</a>
+              <a href="#" class="dropdown-item">Unbilled Items</a>
+              <a href="#" class="dropdown-item">Recent Shipments</a>
+            </div>
+        </li> -->
+        <li class="nav-item dropdown show">
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Purchase Orders</a>
+            <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 36px, 0px);">
+              <a href="/createPo" class="dropdown-item">Create Order</a>
+              <a href="#" class="dropdown-item">Overview</a>
+              <a href="/purchaseOrders/" class="dropdown-item">View Orders</a>
+            </div>
+        </li>
+        
+        <li class="nav-item dropdown show">
+          <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Hello, {{ userName }}</a>
           <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 36px, 0px);">
-            <a href="#" class="dropdown-item">Create Order</a>
-            <a href="#" class="dropdown-item">View Orders</a>
-            <a href="#" class="dropdown-item">Create Rules</a>
+            <a href="#" class="dropdown-item" id="logout">Logout</a>
           </div>
-      </li>
-      <li class="nav-item dropdown show">
-          <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Shipments</a>
-          <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 36px, 0px);">
-            <a href="#" class="dropdown-item">Add</a>
-            <a href="#" class="dropdown-item">Unbilled Items</a>
-            <a href="#" class="dropdown-item">Recent Shipments</a>
-          </div>
-      </li>
-      <li class="nav-item dropdown show">
-          <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Purchase Orders</a>
-          <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 36px, 0px);">
-            <a href="/createPo" class="dropdown-item">Create Order</a>
-            <a href="#" class="dropdown-item">Overview</a>
-            <a href="/purchaseOrders/" class="dropdown-item">View Orders</a>
-          </div>
-      </li>
+        </li>
+      {{else}}
+        <li>{{> atNavButton }}</li>
+      {{/if}}
     </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <input type="text" class="form-control mr-sm-2 search-input" placeholder="Search">
-      <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-    </form>
+    {{#if isLoggedIn }}
+      <form class="form-inline my-2 my-lg-0">
+        <input type="text" class="form-control mr-sm-2 search-input" placeholder="Search">
+        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+      </form>
+    {{/if}}
   </div>
 </div>
 </nav>

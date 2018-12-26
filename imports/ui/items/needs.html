@@ -1,30 +1,41 @@
 <template name="itemNeeds">
-  <div class="container-fluid">
-    <h1>Parts needed to Order</h1>
+  <div class="container">
+    <h1>Parts needed to Order <button type="button" class="btn btn-primary add-need-line"><i class="fa fa-plus" aria-hidden="true"></i> Add Item</button> </h1> 
     {{#if needs}}
-      <table class="table table-hover">
-        <thead></thead>
-        <tbody>
-            {{#each needs}}
-            <tr>
-              <td><a href="/items/{{ itemId._str }}">{{ number }}</a></td>
-              <td>{{ revision }}</td>
-              <td>{{ quantity }}</td>
-              <td>{{ subDate needDate }}</td>
-              <td>{{ lastModified }}</td>
-              <td>{{ addedBy }}</td>
-            </tr>
-            {{#each notes}}
-              <tr class="table-primary">
-                <td colspan="5">{{ note }}</td>
-                <td>{{ createdBy }}</td>
-              </tr>
-            {{/each}}
-          {{/each}}
-        </tbody>
-      </table>
+      {{> itemNeedsTable needs=needs }}
     {{else}}
-      <h1>Loading Needs List</h1>
+      <h1><i class="fa fa-circle-o-notch fa-spin fa-fw"></i> Loading Needs List </h1>
     {{/if}}
   </div>
+  <div class="modal add-dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Item</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form class="needs-validation add-line-form" novalidate>
+          <div class="modal-body">
+            <div class="form-group rec-dialog-form">
+                <input type="text" class="form-control" placeholder="Item Number" name="number">
+                <input type="text" class="form-control" placeholder="Revision" name="revision" tabindex="-1">
+                <input type="text" class="form-control" placeholder="Qty" name="qty">
+                <input type="text" class="form-control" placeholder="Req Date" value="{{ todaysDate }}" id="reqDate">
+            </div>
+            <input type="hidden" id="line-id">
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary save-btn" type="submit">Submit</button>
+            <button class="btn btn-secondary cancel-btn" type="button" data-dismiss="modal">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </template>
+
+
+
+

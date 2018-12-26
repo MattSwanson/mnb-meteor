@@ -9,6 +9,7 @@ import './create.html';
 
 FlowRouter.route('/createPo', {
   name: 'createPo',
+  triggersEnter: [AccountsTemplates.ensureSignedIn],
   action(){
     BlazeLayout.render('createPo');
   }

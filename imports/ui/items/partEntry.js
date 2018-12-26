@@ -8,6 +8,7 @@ import { EventEmitter } from 'events';
 
 FlowRouter.route('/partEntry', {
   name: 'partEntry',
+  triggersEnter: [AccountsTemplates.ensureSignedIn],
   action(){
     BlazeLayout.render('partEntry');
   }

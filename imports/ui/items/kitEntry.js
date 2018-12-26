@@ -9,6 +9,7 @@ import { EventEmitter } from 'events';
 
 FlowRouter.route('/kitEntry', {
   name: 'kitEntry',
+  triggersEnter: [AccountsTemplates.ensureSignedIn],
   action(){
     BlazeLayout.render('kitEntry');
   }

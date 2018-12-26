@@ -1,7 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
-import { Items, simpleItemSchema } from './items';
+import { Items } from './items';
+import { simpleItemSchema } from './schema/items.js';
 import { SimpleSchema } from 'simpl-schema/dist/SimpleSchema';
 import { SearchIndex } from './search';
 
@@ -54,6 +55,9 @@ export const SalesOrderMethods = {
       if(result.length > 0){
         throw new Meteor.Error('po-exists', 'An order with that number and customer already exists');
       }
+      so.lineItems.forEach((line) => {
+        line._id = new Mongo.ObjectID();
+      });
       return SalesOrders.insert(so, (err, res) => {
         if(err)
           return err;
@@ -69,6 +73,88 @@ export const SalesOrderMethods = {
           });
           return res;
         }
+      });
+    }
+  }),
+  delete: new ValidatedMethod({
+    name: 'salesOrders.delete',
+    validate: new SimpleSchema({
+      id: String
+    }).validator(),
+    run({ id }){
+      id = new Mongo.ObjectID(id);
+      return SalesOrders.remove({ _id: id }, (err, res) => {
+        if(err)
+          return err;
+        else{
+          //Delete the entry from the search index
+          SearchIndex.remove({ recordId: id }, (err, res) => {
+            if(err)
+              return err;
+          });
+          return res;
+        }
+      });
+    }
+  }),
+  deleteLineItem: new ValidatedMethod({
+    name: 'salesOrders.deleteLineItem',
+    validate: new SimpleSchema({
+      lineId: String
+    }).validator(),
+    run({ lineId }){
+      const id = new Mongo.ObjectID(lineId);
+      SalesOrders.update({
+        lineItems: {
+          $elemMatch: { _id: id }
+        }
+      }, {
+        $pull: {
+          lineItems: { _id: id }
+        }
+      });
+    }
+  }),
+  addLineItem: new ValidatedMethod({
+    name: 'salesOrders.addLineItem',
+    validate: new SimpleSchema({
+      orderId: String,
+      lineItem: Object,
+      'lineItem.number': String,
+      'lineItem.revision': String,
+      'lineItem.reqDate': Date,
+      'lineItem.qty': {
+        type: 'Number'
+      }
+    }).validator(),
+    run({ orderId, lineItem }){
+      const orderObjectId = new Mongo.ObjectID(orderId);
+      const item = Items.findOne({ number: lineItem.number, revision: lineItem.revision });
+      let newLine = {
+        status: "Open",
+        reqDate: lineItem.reqDate,
+        uom: "pcs",
+        qty: lineItem.qty,
+        _id: new Mongo.ObjectID(),
+        labelsPrinted: false,
+        item: {
+          simpleDescription: item.simpleDescription,
+          revision: item.revision,
+          number: item.number,
+          refId: item._id
+        }
+      };
+      return SalesOrders.update({
+        _id: orderObjectId
+      }, {
+        $push: {
+          lineItems: newLine
+        }
+      }, {}, (err, res) => {
+        if(err)
+          return err;
+        else
+          return res;
       });
     }
   })

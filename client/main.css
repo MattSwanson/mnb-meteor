@@ -85,3 +85,20 @@ table tr.table-note td {
   padding: 0.25rem;
   border-bottom: 2px solid black;
 }
+
+/* icon highlights */
+i.delete:hover{
+  color: crimson
+}
+
+i.add-note:hover{
+  color: green
+}
+
+tr.linked-po-row{
+  display: none;
+}
+
+tbody.show-pos tr.linked-po-row{
+  display: table-row;
+}

@@ -1,7 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
-import { Items, simpleItemSchema } from './items';
+import { Items } from './items';
+import { simpleItemSchema } from './schema/items.js';
 import { SearchIndex } from './search';
 import { SimpleSchema } from 'simpl-schema/dist/SimpleSchema';
 
@@ -67,7 +68,7 @@ export const PurchaseOrderMethods = {
       const orderLine = po.lineItems.find((e) => {
         return e._id._str == lineId;
       });
-      const newQty = orderLine.recQty + Number(recdQty);
+      const newQty = orderLine.recQty + recdQty;
       PurchaseOrders.update({
         lineItems: {
           $elemMatch: { _id: id }
@@ -118,8 +119,12 @@ export const PurchaseOrderMethods = {
     run(po){
       // There is some information we need to get to fill in here first
       // We need descriptions and ref ids for ta
-      console.log(purchaseOrderSchema);
       po._id = new Mongo.ObjectID();
+      // Inject ids into line items for later use
+      po.lineItems.forEach((line) => {
+        line._id = new Mongo.ObjectID();
+        line.recQty = 0;
+      });
       const result = PurchaseOrders.find({ number: po.number }).fetch();
       if(result.length > 0){
         throw new Meteor.Error('po-exists', 'An order with that number already exists');
@@ -139,6 +144,97 @@ export const PurchaseOrderMethods = {
           });
           return res;
         }
+      });
+    }
+  }),
+  delete: new ValidatedMethod({
+    name: 'purchaseOrders.delete',
+    validate: new SimpleSchema({
+      id: String
+    }).validator(),
+    run({ id }){
+      id = new Mongo.ObjectID(id);
+      PurchaseOrders.remove({ _id: id }, (err, res) => {
+        if(err)
+          return err;
+        else{
+          SearchIndex.remove({ recordId: id }, (err, res) => {
+            if(err)
+              return err;
+            else{
+              // Also remove any need links to this po from need lines : /
+              Items.update({
+                'needs.relatedPurchaseOrders': {
+                  $elemMatch: { refId: id }
+                }
+              },{
+                $pull: {
+                  'needs.$.relatedPurchaseOrders': { refId: id }
+                }
+              }, { multi: true }, 
+              (err, res) => {
+                if(err)
+                  return err;
+                else
+                  return res;
+              })
+            }
+          });
+          return res;
+        }
+      });
+    }
+  }),
+  addLineItem: new ValidatedMethod({
+    name: 'purchaseOrders.addLineItem',
+    validate: new SimpleSchema({
+      orderId: String,
+      line: Object,
+      'line.qty': {
+        type: 'Number'
+      },
+      'line.number': String,
+      'line.revision': String,
+      'line.reqDate': Date,
+      'line.process': {
+        type: String,
+        optional: true
+      }
+    }).validator(),
+    run({ orderId, line }){
+      const orderObjId = new Mongo.ObjectID(orderId);
+      const item = Items.findOne({ number: line.number, revision: line.revision });
+      let newLine = {
+        _id: new Mongo.ObjectID(),
+        recQty: 0,
+        reqDate: line.reqDate,
+        qty: line.qty,
+        complete: false,
+        uom: 'pcs'
+      };
+      const itemObj = {
+        simpleDescription: item.simpleDescription,
+        revision: item.revision,
+        number: item.number,
+        refId: item._id
+      }
+      if(line.process){
+        newLine.targetItem = itemObj;
+        newLine.process = line.process;
+      }else{
+        newLine.item = itemObj;
+      }
+      return PurchaseOrders.update({
+        _id: orderObjId
+      }, {
+        $push: {
+          lineItems: newLine
+        }
+      }, {}, (err, res) => {
+        if(err)
+          return err;
+        else
+          return res;
       });
     }
   })

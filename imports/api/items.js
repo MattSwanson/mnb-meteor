@@ -2,21 +2,16 @@ import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import SimpleSchema from 'simpl-schema';
+import { simpleItemSchema } from './schema/items.js';
 
 import { SearchIndex } from './search';
+import { PurchaseOrders } from './purchaseorders';
 
 export const Materials = new Mongo.Collection('materials');
 export const Coatings = new Mongo.Collection('coatings');
 export const SecondaryProcesses = new Mongo.Collection('secondaryProcesses');
 
-// This schema is used for places where references to other items are used
-export const simpleItemSchema = new SimpleSchema({
-  number: String,
-  revision: String,
-  simpleDescription: String,
-  refId: Object,
-  'refId._str': String
-});
+
 
 const partSchema = new SimpleSchema({
     description: String,
@@ -97,7 +92,7 @@ const itemSchema = new SimpleSchema({
 });
 
 export const Items = new Mongo.Collection('items');
-Items.attachSchema(itemSchema);
+//Items.attachSchema(itemSchema);
 
 export const ItemMethods = {
   addMaterial: new ValidatedMethod({
@@ -181,8 +176,185 @@ export const ItemMethods = {
         }
       });
     }
+  }),
+  addNeedLine: new ValidatedMethod({
+    name: 'items.addNeedLine',
+    validate: new SimpleSchema({
+      number: String,
+      revision: String,
+      qty: { type: 'Number' },
+      reqDate: Date
+    }).validator(),
+    run({
+      number, revision, qty, reqDate
+    }){
+      const timestamp = new Date();
+      const user = Meteor.users.findOne({ _id: this.userId });
+      let entry = {
+        _id: new Mongo.ObjectID(),
+        status: "Open",
+        addedBy: user.profile.fname,
+        needDate: reqDate,
+        quantity: qty,
+        lastModified: timestamp,
+        createdAt: timestamp
+      };
+      return Items.update({ number: number, revision: revision }, {
+        $push: {
+          needs: entry
+        }
+      }, {}, (err, res) => {
+        if(err)
+          return err;
+        else
+          return err;
+      });
+    }
+  }),
+  deleteNeedLine: new ValidatedMethod({
+    name: 'items.deleteNeedLine',
+    validate: new SimpleSchema({
+      id: String
+    }).validator(),
+    run({ id }){
+      const objId = new Mongo.ObjectID(id);
+      return Items.update({
+        needs: {
+          $elemMatch: { _id: objId }
+        }
+      },{
+        $pull: {
+          needs: { _id: objId }
+        }
+      });
+    }
+  }),
+  addNeedLineNote: new ValidatedMethod({
+    name: 'items.addNeedLineNote',
+    validate: new SimpleSchema({
+      id: String,
+      note: String
+    }).validator(),
+    run({ id, note }){
+      const objId = new Mongo.ObjectID(id);
+      const user = Meteor.users.findOne({ _id: this.userId });
+      let newNote = {
+        _id: new Mongo.ObjectID(),
+        createdBy: user.profile.fname,
+        createdAt: new Date(),
+        note: note
+      }
+      return Items.update({
+        needs: {
+          $elemMatch: { _id: objId }
+        }
+      },{
+        $push: {
+          'needs.$.notes': newNote
+        }
+      }, (err, res) => {
+        if(err){
+          return err;
+        }
+      });
+    }
+  }),
+  deleteNeedLineNote: new ValidatedMethod({
+    name: 'items.deleteNeedLineNote',
+    validate: new SimpleSchema({
+      id: String
+    }).validator(),
+    run({ id }){
+      const objId = new Mongo.ObjectID(id);
+      return Items.update({
+        'needs.notes': {
+          $elemMatch: { _id: objId }
+        }
+      },{
+        $pull: {
+          'needs.$.notes': { _id: objId }
+        },
+      });
+    }
+  }),
+  linkPoToNeedLine: new ValidatedMethod({
+    name: 'items.linkPoToNeedLine',
+    validate: new SimpleSchema({
+      id: String,
+      poNumber: String
+    }).validator(),
+    run({ id, poNumber }){
+      const objId = new Mongo.ObjectID(id);
+      const po = PurchaseOrders.findOne({ number: poNumber });
+      if(!po){
+        throw new Meteor.Error('po-doesnt-exist', 'PO Number does not exist in the db');
+      }
+      let linkInfo = {
+        _id: new Mongo.ObjectID(),
+        number: po.number,
+        company: po.vendor.name,
+        orderDate: po.orderDate,
+        refId: po._id
+      }
+      return Items.update({
+        needs: {
+          $elemMatch: { _id: objId }
+        }
+      }, {
+        $push: {
+          'needs.$.relatedPurchaseOrders': linkInfo
+        },
+        $set: { 'needs.$.lastModified': new Date() }
+      });
+    }
+  }),
+  unlinkPoFromNeedLine: new ValidatedMethod({
+    name: 'items.unlinkPoFromNeedLine',
+    validate: new SimpleSchema({
+      id: String,
+    }).validator(),
+    run({ id }){
+      const objId = new Mongo.ObjectID(id);
+      return Items.update({
+        'needs.relatedPurchaseOrders': {
+          $elemMatch: { _id: objId }
+        }
+      },{
+        $pull: {
+          'needs.$.relatedPurchaseOrders': { _id: objId }
+        },
+        $set: { 'needs.$.lastModified': new Date() }
+      });
+    }
+  }),
+  updateNeedLineStatus: new ValidatedMethod({
+    name: 'items.updateNeedLineStatus',
+    validate: new SimpleSchema({
+      id: String,
+      newStatus: String
+    }).validator(),
+    run({ id, newStatus }){
+      const objId = new Mongo.ObjectID(id);
+      return Items.update({
+        needs: {
+          $elemMatch: { _id: objId }
+        }
+      },{
+        $set: { 'needs.$.status': newStatus, 'needs.$.lastModified': new Date() }
+      });
+    }
   })
 };
+
+updateNeedLineLastUpdate = (needLineObjId) => {
+  Items.update({
+    needs: {
+      $elemMatch: { _id: objId }
+    }
+  },{
+      $set: { 'needs.$.lastUpdated' : new Date() }
+  });
+}
 
 if(Meteor.isServer){
   Meteor.publish('singleItem', function(id){
@@ -227,6 +399,6 @@ if(Meteor.isServer){
 
   Meteor.publish('activeRevisions', function(){
     console.log('Publishing Active Revisions');
-    return Items.find({ isActive: true }, { fields: { _id: 1, number: 1, revision: 1, simpleDescription: 1, cost: 1, salePrice: 1, part: 1 }});
+    return Items.find({ isActive: true }, { fields: { _id: 1, number: 1, revision: 1, simpleDescription: 1, cost: 1, salePrice: 1, part: 1, needs: 1 }});
   });
 }

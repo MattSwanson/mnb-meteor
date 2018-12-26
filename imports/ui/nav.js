@@ -4,7 +4,8 @@ import { SearchIndex } from '../api/search.js';
 SearchResults = new Mongo.Collection(null);
 
 Template.nav.onCreated(function(){
-  Meteor.subscribe('searchIndex');
+  if(Meteor.userId())
+    Meteor.subscribe('searchIndex');
 });
 
 Template.nav.events({
@@ -27,7 +28,10 @@ Template.nav.events({
   'click .search-results a': function(event, template){
     SearchResults.remove({});
     template.find('.search-input').value = '';
-  }
+  },
+  'click a#logout': function(event){
+    AccountsTemplates.logout();
+  },
 });
 
 Template.nav.helpers({
@@ -48,5 +52,13 @@ Template.nav.helpers({
         url += 'items/'; break;
     }
     return url;
+  },
+  isLoggedIn(){
+    return !!Meteor.userId();
+  },
+  userName(){
+    //TODO actaully get the users name here...
+    const user = Meteor.users.findOne({ _id: Meteor.userId()});
+    return user.profile.fname;
   }
 });

@@ -6,6 +6,7 @@ import './index.html';
 
 FlowRouter.route('/purchaseOrders/', {
   name: 'purchaseOrders',
+  triggersEnter: [AccountsTemplates.ensureSignedIn],
   action(){
     BlazeLayout.render('poIndex');
   }

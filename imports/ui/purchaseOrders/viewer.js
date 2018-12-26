@@ -1,8 +1,11 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { Template } from 'meteor/templating';
+import { ReactiveDict } from 'meteor/reactive-dict';
+import { Items } from '../../api/items.js';
 import { PurchaseOrders, PurchaseOrderMethods } from '../../api/purchaseorders.js';
 
+import '../items/templates/itemNeedsTable';
 import './viewer.html';
 
 Template.registerHelper('todaysDate', () => {
@@ -11,6 +14,7 @@ Template.registerHelper('todaysDate', () => {
 
 FlowRouter.route('/purchaseOrders/:id', {
   name: 'salesOrder',
+  triggersEnter: [AccountsTemplates.ensureSignedIn],
   action(){
     BlazeLayout.render('poViewer');
   }
@@ -20,6 +24,12 @@ Template.poViewer.events({
   'click .rec-btn': function(event, template){
     $('.rec-dialog input#line-id').val(event.currentTarget.getAttribute('line-id'));
     $('.rec-dialog').modal('show');
+  },
+  'click #add-line-btn': function(event){
+    $('.add-line-dialog').modal('show');
+  },
+  'change [name="line-type"]'(event, instance){
+    instance.state.set('lineType', event.target.id);
   },
   'click .save-btn': function(event, template){
     // Get the qty and date from the forms and send them
@@ -60,10 +70,69 @@ Template.poViewer.events({
           alert(err);
       });
     }
+  },
+  'click .delete-po':function(event){
+    if(confirm('Are you sure you want to delete this PO? This cannot be undone!')){
+      // Call method to delete the line based on id
+      const id = FlowRouter.getParam('id');
+      PurchaseOrderMethods.delete.call({
+        id: id
+      }, (err, res) => {
+        if(err)
+          alert(err);
+        else
+          FlowRouter.go('/createPo');
+      });
+    }
+  },
+  'blur [name="number"]': function(event){
+    let itemNumber = event.currentTarget.value.trim();
+    const item = Items.findOne({ number: itemNumber });
+    if(!item){
+      console.log('Invalid item number entered');
+      $(event.currentTarget).closest('div').find('input[name=revision]').val('');
+    }else{
+      const rev = item.revision;
+      $(event.currentTarget).closest('div').find('input[name=revision]').val(rev);
+    }
+  },
+  'submit form': function(event, instance){
+    event.preventDefault();
+    console.log("Submitting add line form");
+    const poId = FlowRouter.getParam('id');
+    // Gather data from form into object
+    let reqDate = new Date(event.target.reqDate.value.trim());
+    if(isNaN(reqDate.getMilliseconds())){ //Invalid Date
+      alert("Date is not valid");
+      return;
+    }
+    let lineItem = {
+      qty: event.target.qty.value.trim(),
+      number: event.target.number.value.trim(),
+      revision: event.target.revision.value.trim(),
+      reqDate: reqDate
+    };
+    if(Template.instance().state.get('lineType') == 'line-type-process'){
+      lineItem.process = event.target.process.value.trim()
+    }
+    
+    PurchaseOrderMethods.addLineItem.call({
+      orderId: poId,
+      line: lineItem
+    }, (err, res) => {
+      if(err)
+        alert(err);
+      else{
+        $('.add-line-dialog').modal('hide');
+      }
+    })
   }
 });
 
 Template.poViewer.onCreated(function(){
+  this.state = new ReactiveDict();
+  this.state.set('lineType', 'line-type-item');
+  Meteor.subscribe('activeRevisions');
   this.autorun(function(){
     FlowRouter.watchPathChange();
     let id = FlowRouter.getParam('id');
@@ -76,5 +145,38 @@ Template.poViewer.helpers({
     let id = FlowRouter.getParam('id');
     const oid = new Mongo.ObjectID(id);
     return PurchaseOrders.findOne(oid);
+  },
+  isProcessLine(){
+    const instance = Template.instance();
+    return instance.state.get('lineType') == 'line-type-process';
+  },
+  linkedNeedLines(){
+    let id = FlowRouter.getParam('id');
+    const oid = new Mongo.ObjectID(id);
+    let items = Items.find({
+      'needs.relatedPurchaseOrders': {
+        $elemMatch: {
+          refId: oid
+        }
+      }
+    }).fetch();
+
+    let needLines = [];
+    items.forEach((item) => {
+      // Step through each item and grab only the need lines that are linked to this po
+      // some items could have multiple need lines so don't get ones that AREN'T LINKED TO THIS PO!
+      needLines = item.needs.reduce((acc,line) => {
+        let hasPo = line.relatedPurchaseOrders.find((e) => {
+          return e.refId._str == id;
+        });
+        if(hasPo){
+          line.number = item.number;
+          line.revision = item.revision;
+          needLines.push(line);
+        }
+        return needLines;
+      }, needLines);
+    });
+    return needLines;
   }
 });

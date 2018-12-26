@@ -1,14 +1,14 @@
 <template name="soViewer">
   <div class="container">
     {{#if order }}
-    <h1>PO {{ order.custOrderNumber }}</h1>
+    <h1>PO {{ order.custOrderNumber }} - <i class="fa fa-trash delete-so" aria-hidden="true"></i></h1>
     <h2>{{ order.customer.name }}</h2>
     <h2>Order Date: 
       {{#if order.orderDate }}
         {{ subDate order.orderDate }}
       {{/if}}
     </h2>
-    <table class="table table-striped table-hover">
+    <table class="table table-striped table-hover line-items-table">
       <thead>
         <tr>
           <th>Qty</th>
@@ -44,6 +44,7 @@
                 </div>
               </div>
             </td>
+            <td><i class="fa fa-trash delete-line" aria-hidden="true" line-id="{{ _id._str }}"></i></td>
           </tr>
           {{#if note}}
             <tr class="table-info table-note">
@@ -53,8 +54,37 @@
         {{/each}}
       </tbody>
     </table>
+    <div class="container">
+      <button type="button" class="btn btn-primary btn-sm" id="add-line-btn"><i class="fa fa-plus"></i> Add Line</button>
+    </div>
   {{else}}
     <h1>Loading Order...</h1>
   {{/if}}
   </div>
+  <div class="modal add-line-dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Add Line</h5>
+            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form class="needs-validation add-line-form" novalidate>
+            <div class="modal-body">
+              <div class="form-group add-line-dialog-form">
+                  <input type="text" class="form-control" placeholder="Qty" name="qty">
+                  <input type="text" class="form-control" placeholder="Item Number" name="number">
+                  <input type="text" class="form-control" placeholder="Rev" name="revision" tabindex="-1">
+                  <input type="text" class="form-control" placeholder="Due Date" name="dueDate">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-primary save-btn" type="submit">Submit</button>
+              <button class="btn btn-secondary cancel-btn" type="button" data-dismiss="modal">Cancel</button>
+            </div>
+        </form>
+        </div>
+      </div>
+    </div>
 </template>
