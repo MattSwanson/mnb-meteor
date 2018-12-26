@@ -245,7 +245,8 @@ Template.partViewer.helpers({
     let allItems = Items.find({ _id: { $in: itemIds }}, { fields: { usedIn: 1 }}).fetch();
     let usedIn = [];
     allItems.forEach((item) => {
-      usedIn = [...usedIn, ...item.usedIn];
+      if(item.usedIn)
+        usedIn = [...usedIn, ...item.usedIn];
     });
     return usedIn;
   }
