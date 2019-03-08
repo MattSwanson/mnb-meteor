@@ -3,6 +3,8 @@ import { Mongo } from 'meteor/mongo';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import SimpleSchema from 'simpl-schema';
 import { simpleItemSchema } from './schema/items.js';
+import S3 from 'aws-sdk/clients/s3';
+const s3Conf = Meteor.settings.s3 || {};
 
 import { SearchIndex } from './search';
 import { PurchaseOrders } from './purchaseorders';
@@ -342,6 +344,28 @@ export const ItemMethods = {
       },{
         $set: { 'needs.$.status': newStatus, 'needs.$.lastModified': new Date() }
       });
+    }
+  }),
+  getPresignedS3Url: new ValidatedMethod({
+    name: 'items.getPresignedS3Url',
+    validate: new SimpleSchema({
+      fileName: String
+    }).validator(),
+    run({ fileName }){
+      // Don't run this on the client since the auth isn't present there
+      if(this.isSimulation)
+        return; 
+      // Create the s3 client
+      const s3 = new S3({
+        signatureVersion: 'v4',
+        secretAccessKey: s3Conf.secret,
+        accessKeyId: s3Conf.key,
+        region: s3Conf.region,
+      });
+      
+      // generate a presigned url
+      const params = {Bucket: s3Conf.bucket, Key: `docs/${fileName}`};
+      return { url: s3.getSignedUrl('getObject', params) };
     }
   })
 };

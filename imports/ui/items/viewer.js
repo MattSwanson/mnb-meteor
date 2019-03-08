@@ -5,9 +5,12 @@ import { Template } from 'meteor/templating';
 import './viewer.html';
 import './partViewer.html';
 import './kitViewer.html';
-import { Items } from '../../api/items';
+import { Items, ItemMethods } from '../../api/items';
 import { SalesOrders } from '../../api/salesorders';
 import { PurchaseOrders } from '../../api/purchaseorders';
+
+import S3 from 'aws-sdk/clients/s3';
+const s3Conf = Meteor.settings.public.s3 || {};
 
 FlowRouter.route('/items/:id', {
   name: 'item',
@@ -249,5 +252,56 @@ Template.partViewer.helpers({
         usedIn = [...usedIn, ...item.usedIn];
     });
     return usedIn;
+  },
+  getPresignedS3URL(fileName){
+    //Create S3 client
+    const s3 = new S3({
+      signatureVersion: 'v4',
+      signatureCache: false,
+      secretAccessKey: s3Conf.secret,
+      accessKeyId: s3Conf.key,
+      region: s3Conf.region,
+      // httpOptions: {
+      //   timeout: 6000,
+      //   agent: false
+      // }
+    });
+
+    // const params = {Bucket: s3Conf.bucket, Key: `docs/${fileName}`};
+    // console.log(s3Conf);
+    // // const url = s3.getSignedUrl('getObject', params, (err, data) => {
+    // //   if(err)
+    // //     return err;
+    // //   else
+    // //     console.log(data);
+    // // });
+    // // console.log(`Presigned URL= ${url}`);
+    // s3.getObject(params, (err, data) => {
+    //   if(err)
+    //     return err;
+    //   else
+    //     console.log(data);
+    // });
+
+    // s3.listObjects({ Bucket: "mnbolt1", MaxKeys: 10}, (err, data) => {
+    //   if(err)
+    //     return err;
+    //   else
+    //     console.log(data);
+    // })
+
+    return url;
+  }
+});
+
+Template.partViewer.events({
+  'click .view-btn':function(event){
+    const fileName = event.currentTarget.getAttribute('file-name');
+    ItemMethods.getPresignedS3Url.call({fileName: fileName}, (err, res) => {
+      if(err)
+        console.error(err);
+      else
+        window.location = res.url;
+    })
   }
 });
