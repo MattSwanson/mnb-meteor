@@ -204,16 +204,18 @@
                   <th scope="col">Category</th>
                   <th scope="col">Format</th>
                   <th scope="col">Added</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
                 {{#each part.files }}
                 <tr>
-                  <td><a href="https://minnesotabolt.com/docs/{{ name }}">{{ originalName }}</a></td>
+                  <td>{{ originalName }}</td>
                   <td>{{ refNum }}</td>
                   <td>{{ category }}</td>
                   <td>{{ format }}</td>
                   <td>{{ addedAt }}</td>
+                  <td><button class="btn btn-primary btn-sm view-btn" file-name="{{ name }}">View</button></td>
                 </tr>
                 {{/each}}
               </tbody>
