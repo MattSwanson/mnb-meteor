@@ -23,6 +23,6 @@
     "testModule": "tests/main.js"
   },
   "devDependencies": {
-    "nightmare": "^3.0.1"
+    "nightmare": "^3.0.2"
   }
 }
